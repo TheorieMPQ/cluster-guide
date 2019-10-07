@@ -1,13 +1,24 @@
 # cluster-guide
 A guide to using clusters in general (and th-top in particular)
 
-## Loading modules
+# Loading modules
+
+Th-Top uses modules to load python and Julia. By default users have only python2 and no julia.
+These can be loaded using the following command:
+```shell
+$ module load <module_name>
+```
+
+In order to avoid having to do that at each login, one can append these commands to the `.bash_profile` file in the home directory so that they get executed every time you log in. For instance by executing:
+```shell
+$ echo "module load <module_name>" >> ~/.bash_profile
+```
 
 ### Examples
 ```shell
 $ module load anaconda-python
 ```
-Load `anaconda-python`.
+Loads the last `python` distribution (`anaconda-python`).
 
 ```shell
 $ module load julia
@@ -19,14 +30,21 @@ $ module load julia/1.2.0
 ```
 Load `julia` v1.2.0.
 
-In order to avoid having to do that at each log in, one can append these commands to the `.bash_profile` file in the home directory. For instance:
-```shell
-$ echo "module load <module_name>" >> ~/.bash_profile
-```
-
-## Submitting jobs via `qsub`
-Th-top is not like a standard desktop computer, but it is a system composed by a master server managing several computing nodes. 
+# Submitting jobs via `qsub`
+Th-top is not like a standard desktop computer, but it is a system composed by a master server managing 6 nodes, 4 nodes with 20 CPU cores and 2 nodes with 20 CPU cores and 3 GPUs.
 Running computations on such systems is a bit different than usual, and it will be explained below.
+
+All nodes and the master share the same folders and filesystem.
+When you log in via ssh you will be connected to the master node.
+
+A computation to be executed on th-top is called a job. A job can be standard, if it does not require user's intervention and is completely specified by a series of commands that the computer can run itself, or it can be interactive, letting you execute operations through the terminal like a standard terminal session on your desktop computer or `thX`.
+
+A complete guide can be found [here](https://wikis.nyu.edu/display/NYUHPC/Copy+of+Tutorial+-+Submitting+a+job+using+qsub).
+
+## Launching interactive jobs
+
+Interactive jobs are specified by the command-line flag `-I`. Some examples can be found hereafter.
+
 ### Examples
 ```shell
 $ qsub -I -l select=1:ncpus=1
@@ -42,6 +60,12 @@ Start a job in interactive mode (`-I`) on 5 CPUs and 1 GPU with default memory b
 $ qsub -I -l select=1:ncpus=10:ngpus=1:mem=10G
 ```
 Start a job in interactive mode (`-I`) on 10 CPUs and 1 GPU with specific maximum memory (10GB).
+
+Unavailable ressources cannot be allocated. e.g. asking for 30 CPUs will cause the job to never start because no node has 30 CPUs.
+This is particularily tricky with RAM, you can check the ressources available on any node by refering to the relevant section of this guide.
+
+## Launching batch jobs
+
 
 ## Getting information about ressources available on each node
 
