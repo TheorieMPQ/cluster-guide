@@ -25,7 +25,8 @@ $ echo "module load <module_name>" >> ~/.bash_profile
 ```
 
 ## Submitting jobs via `qsub`
-
+Th-top is not like a standard desktop computer, but it is a system composed by a master server managing several computing nodes. 
+Running computations on such systems is a bit different than usual, and it will be explained below.
 ### Examples
 ```shell
 $ qsub -I -l select=1:ncpus=1
