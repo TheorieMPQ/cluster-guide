@@ -68,7 +68,7 @@ This is particularily tricky with RAM, you can check the ressources available on
 
 A batch job is a job that runs autonomously without requiring any human intervention. To submit a batch job, a small bash file containing all the commands to be executed together with information about the ressources to be allocated by master is to be created.
 
-This file should look somehow like the following example:
+This file, here called e.g. `myjob`, should look somehow like the following example:
 ```
     #!/bin/bash
     #PBS -N “juliaTest”
