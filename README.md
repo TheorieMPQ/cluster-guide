@@ -70,15 +70,15 @@ A batch job is a job that runs autonomously without requiring any human interven
 
 This file, here called e.g. `myjob`, should look somehow like the following example:
 ```
-    #!/bin/bash
-    #PBS -N juliaTest
-    #PBS -o juliaTest.out
-    #PBS -e juliaTest.err
-    #PBS -l nodes=1:ncpus=10:mem=XXXG
+#!/bin/bash
+#PBS -N juliaTest
+#PBS -o juliaTest.out
+#PBS -e juliaTest.err
+#PBS -l nodes=1:ncpus=10:mem=XXXG
 
-    echo "running a job!"
+echo "running a job!"
     
-    julia  ~/myscript.jl
+julia  ~/myscript.jl
 ```
 
 The job can then be launched by running
