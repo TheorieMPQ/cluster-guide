@@ -76,7 +76,7 @@ This file, here called e.g. `myjob`, should look somehow like the following exam
     #PBS -e juliaTest.err
     #PBS -l nodes=1:ncpus=10:mem=XXXG
 
-    echo “running a job!"
+    echo "running a job!"
     
     julia  ~/myscript.jl
 ```
