@@ -44,24 +44,23 @@ A complete guide can be found [here](https://wikis.nyu.edu/display/NYUHPC/Copy+o
 ### Jupiter interacting notebook 
 
 From your local computer, connect to th-top with the present command:
+```
 ssh -L 8090:localhost:8090 YOURLOGIN@th-top.mpq.univ-paris-diderot.fr
-
+```
 where YOURLOGIN must be replaced by your personal th-top login.
 
-Then, open Chrome (not Safari) on your local computer.
-Connect via the web browser to localhost:8090/hub/login
+Then, open Chrome/Firefox (not Safari) on your local computer.
+Connect via the web browser to `localhost:8090`
 
 Enter login and password for th-top on the login window.
 
 Now you are on Jupiter. 
 First, you have to choose how many cores you want to use for your job.
 
-To see the directory tree:
-http://localhost:8090/user/YOURLOGIN/tree?
+To see the directory tree: `http://localhost:8090/user/YOURLOGIN/tree?`
 Note that you can copy files from your local computer just by dragging the icon from your Directory Finder to the Notebook tree.
 
-To see the menu with the Applications (Julia, Python, ...):
-http://localhost:8090/user/YOURLOGIN/lab
+To see the menu with the Applications (Julia, Python, ...): `http://localhost:8090/user/YOURLOGIN/lab`
 
 **IMPORTANT: When you are done, you should click on Control Panel and then STOP MY SERVER.
 Otherwise, the cores will stay occupied !!!!!**  
