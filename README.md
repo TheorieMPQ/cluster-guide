@@ -64,7 +64,7 @@ To see the menu with the Applications (Julia, Python, ...):
 http://localhost:8090/user/YOURLOGIN/lab
 
 **IMPORTANT: When you are done, you should click on Control Panel and then STOP MY SERVER.
-Otherwise, the cores will stay occupied !!!!!  
+Otherwise, the cores will stay occupied !!!!!**  
 
 ### Launching interactive jobs
 
