@@ -14,6 +14,13 @@ In order to avoid having to do that at each login, one can append these commands
 $ echo "module load <module_name>" >> ~/.bash_profile
 ```
 
+
+## Syncronisation of directories from th-top to local computer
+rsync -avzhe ssh YOURLOGIN@th-top.mpq.univ-paris-diderot.fr:/home/YOURLOGIN/YOURDIRECTORY/ /Users/YOURLOCALLOGIN/YOURDIRECTORY/
+where YOURLOGIN is the your name on th-top and YOURLOCALLOGIN is the for your local computer.
+This command will copy all the directory from the remote server (in this case th-top) to the local computer.
+
+
 #### Examples
 ```shell
 $ module load anaconda-python
