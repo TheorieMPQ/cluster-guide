@@ -52,7 +52,7 @@ to make it work, every user must (by himself) ensure the following things:
  
 Assuming an user has a good user account on th0, the way to setup passwordless is the following:
  - check if there is a file in `~/.ssh/id_rsa` 
- - if there is none, do the following: `ssh-keygen -t rsa -b 4096 -C "your_email@domain.com"`
+ - if there is none, do the following: `ssh-keygen -t rsa -b 4096 -C "$USER@master0@th-top.mpq.univ-paris-diderot.fr"`
  - when he asks for a path, just press enter so he defaults to `~/.ssh/id_rsa` (check that this is the default)
  - when he asks for a password, don't set any (press enter)
  - run `ssh-copy-id $USER@th0.mpq.univ-paris-diderot.fr`
