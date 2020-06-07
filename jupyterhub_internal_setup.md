@@ -38,3 +38,23 @@ they are installed through pip, so if you upgrade through conda everthing should
 The documentation for this stuff is in the ProfilesSpawner github repo.
 
 If you want to add new configurations you should add them here and then restart jupyterhub.
+
+## Using SSH spanwer (launch jupyter clients on other computers like th0)
+This is very brittle, so use with caution.
+This spawner does not set any limit on th0 usage, so people might use all computing power and starve the others...
+Moreover, th0 and so on have a different filesystem from th-top nodes, and it's older, and it might have many other problems...
+
+to make it work, every user must (by himself) ensure the following things:
+ - on th0 he must have an account with *exactly the same username* than his username on th-top
+ - he must have enabled passwordless key authentication from thtop to th0 ([see here](https://linuxize.com/post/how-to-setup-passwordless-ssh-login/)). Moreover the ssh key on thtop should be located exactly at `/home/$USER/.ssh/id_rsa`. wonb't work othgerwise.
+ - he must install by himself, for himself his jupyter kernels.
+ 
+ 
+Assuming an user has a good user account on th0, the way to setup passwordless is the following:
+ - check if there is a file in `~/.ssh/id_rsa` 
+ - if there is none, do the following: `ssh-keygen -t rsa -b 4096 -C "your_email@domain.com"`
+ - when he asks for a path, just press enter so he defaults to `~/.ssh/id_rsa` (check that this is the default)
+ - when he asks for a password, don't set any (press enter)
+ - run `ssh-copy-id $USER@th0.mpq.univ-paris-diderot.fr`
+ 
+from now on `th0` should work for the user.
