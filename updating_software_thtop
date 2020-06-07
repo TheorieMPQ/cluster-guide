@@ -1,0 +1,22 @@
+# Th-Top
+
+## How Julia is setup
+
+Julia versions are installed in `/opt/julia/julia-1.X.Y`. 
+
+Those versions are not in the path, so normally they are not executable.
+
+They can be broght in the path by typing `module load julia` or `module load julia/1.X/Y`. Those module files are located at `/usr/local/Modules/julia/1.X/1.X.Y`
+
+To install new versions of julia an user with sudo power should
+ - download the 64 bit linux pacakge
+ - unzip it 
+ - move the resulting folder `julia-1.X.Y` to `/opt/julia/`
+ - create a new module file at /usr/local/Modules/julia/1.X/1.X.Y` by copying any other module file for an older version and editing the version.
+ - then to generate the ijulia kernel for jupyter you should run the following command as root
+ ```
+ sudo su
+ cd $HOME
+ ./julia_update
+ ```
+ the julia_update program *MUST* be executed as root otherwise permission iossues will arise.
