@@ -105,7 +105,7 @@ This file, here called e.g. `myjob`, should look somehow like the following exam
 #PBS -N juliaTest
 #PBS -o juliaTest.out
 #PBS -e juliaTest.err
-#PBS -l nodes=1:ncpus=10:mem=XXXG
+#PBS -l select=1:ncpus=10:mem=XXXG
 
 echo "running a job!"
     
