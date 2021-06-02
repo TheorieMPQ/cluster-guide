@@ -29,7 +29,7 @@ Unzip it on your home directory with `tar -xzvf julia_irene.tar.gz -C /ccc/cont0
 
 ### Submitting a job
 
-Here is an example of a julia script:
+Here is an example of a script:
 ```
 #!/bin/bash
 #MSUB -q  rome 
