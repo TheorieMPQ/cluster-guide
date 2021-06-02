@@ -12,7 +12,7 @@ To do so, follow these steps in the right order (and replace username with your 
 
 1) connect to th-top
 2) `module unload julia`
-3) `module load julia/1.5`
+3) `module load julia/1.5` (this is because the IRENE version is 1.5.3, it means that on th-top this will be the version to add packages to to transfer them to IRENE).
 4) `export JULIA_DEPOT_PATH="/home/username/.julia"`
 5) Launch julia, add packages you want and run `]precompile` to precompile everything
 8) Exit julia, and transfer you .julia directory to IRENE with `rsync -rvazh .julia/ username@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/username/.julia/` (check that there is a .julia folder in IRENE).
@@ -20,7 +20,7 @@ To do so, follow these steps in the right order (and replace username with your 
 11) `export JULIA_DEPOT_PATH="/ccc/cont003/dsku/blanchet/home/user/unipdide/username/.julia"` (replace username by your username!)
 12) Run julia, check with `]status` that you have the desired packages and have fun!
 
-If you're a bit lazy you can ask me and I can send you a compressed file that contains the following packages:
+If you're a bit lazy you can ask me (Kaelan) and I can send you a compressed file that contains the following packages:
 
 QuantumOpticsBase, QuantumOptics, LinearAlgebra, SparseArrays, ElasticArrays, Random, Distributions, Statistics, DifferentialEquations, OrdinaryDiffEq, DiffEqBase, DiffEqCallbacks, LightGraphs, Kronecker, IterativeSolvers, LinearMaps, DataStructures, KrylovKit, Interpolations, JLD, JLD2, BSON, Revise, Distributed, LsqFit, Optim, Conda, PyCall, FFTW, AbstractFFTs, ProgressMeter, MLDataUtils, StatsBase, Dates, Flux
 
