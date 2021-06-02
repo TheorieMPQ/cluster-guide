@@ -2,7 +2,7 @@
 
 Since we are now many adepts of th-top, sometimes we have to wait in the virtual queue for our jobs to launch. Thankfully we gained access to the IRENE supercomputer with virtually unlimited access until march 2022.
 
-*Access to IRENE: you need to complete a form and ask Cristiano and Loic Noel, the IT guy, to sign it.*
+*Access to IRENE: you need to complete a form and ask Cristiano and Loïc Noël, our IT responsible, to sign it.*
 
 ### Package installation
 
