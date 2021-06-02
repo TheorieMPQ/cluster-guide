@@ -34,10 +34,10 @@ Here is an example of a julia script:
 #MSUB -q  rome # machine to use (this is the one we have access to)
 #MSUB -A  gen12462 # grant information
 #MSUB -m  scratch,work,store # mode 
-#MSUB -T 3600 #time limit in seconds (if not specified default is 7200)
+#MSUB -T 3600 # time limit in seconds (if not specified default is 7200)
 #MSUB -o juliaTest.out # out file
 #MSUB -e juliaTest.err # error file
-module load julia # to load julia
+module load julia
 echo "running a job" 
 julia /ccc/cont003/dsku/blanchet/home/user/unipdide/username/JULIA_FILE_NAME.jl
 ```
