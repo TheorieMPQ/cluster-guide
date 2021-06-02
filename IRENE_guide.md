@@ -34,7 +34,6 @@ Here is an example of a julia script:
 #MSUB -q  rome # machine to use (this is the one we have access to)
 #MSUB -A  gen12462 # grant information
 #MSUB -m  scratch,work,store # mode 
-#MSUB -n 
 #MSUB -T 3600 #time limit in seconds (if not specified default is 7200)
 #MSUB -o juliaTest.out # out file
 #MSUB -e juliaTest.err # error file
