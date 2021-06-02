@@ -32,16 +32,16 @@ Unzip it on your home directory with `tar -xzvf julia_irene.tar.gz -C /ccc/cont0
 Here is an example of a julia script:
 ```
 #!/bin/bash
-#MSUB -q  rome # machine to use (this is the one we have access to)
-#MSUB -A  gen12462 # grant information
-#MSUB -m  scratch,work,store # mode 
-#MSUB -T 3600 # time limit in seconds (if not specified default is 7200)
-#MSUB -o juliaTest.out # out file
-#MSUB -e juliaTest.err # error file
+#MSUB -q  rome 
+#MSUB -A  gen12462
+#MSUB -m  scratch,work,store 
+#MSUB -T 3600 
+#MSUB -o juliaTest.out
+#MSUB -e juliaTest.err 
 module load julia
 echo "running a job" 
 julia /ccc/cont003/dsku/blanchet/home/user/unipdide/username/JULIA_FILE_NAME.jl
 ```
 
-You can run your job with `ccc_msub my_script`, and obtain information about it with `ccc_mpeek job_id`. The command `ccc_mpp`is like `qstat` on th-top, but here it is useless since too many jobs are running. 
+`-T` is the time limit in seconds (if not specified default is 7200). You can run your job with `ccc_msub my_script`, and obtain information about it with `ccc_mpeek job_id`. The command `ccc_mpp`is like `qstat` on th-top, but here it is useless since too many jobs are running. 
 For more information, type `machine_info` in IRENE or visit this page https://forge.ipsl.jussieu.fr/igcmg_doc/wiki/Doc/ComputingCenters/TGCC/Irene.
