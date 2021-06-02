@@ -13,7 +13,7 @@ To do so, follow these steps in the right order (and replace username with your 
 1) connect to th-top
 2) `module unload julia`
 3) `module load julia/1.5` (this is because the IRENE version is 1.5.3, it means that on th-top this will be the version to add packages to to transfer them to IRENE).
-4) Remove components of your .julia folder `rm -rf .julia`(keep a copy in case you need to)
+4) Remove components of your .julia folder belonging to the version 1.5 `rm -rf .julia/environments/v1.5* ; rm -rf .julia/compiled/v1.5*`(keep a copy in case you need to)
 5) `export JULIA_DEPOT_PATH="/home/username/.julia"`
 6) Launch julia, add packages you want and run `]precompile` to precompile everything
 8) Exit julia, and transfer your .julia directory to IRENE with `rsync -rvazh .julia/ username@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/username/.julia/` (check that there is a .julia folder in IRENE). As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:.julia/ .julia/` from the home directory on IRENE.
