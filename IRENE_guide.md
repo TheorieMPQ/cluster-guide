@@ -16,9 +16,9 @@ To do so, follow these steps in the right order (and replace username with your 
 4) Remove components of your .julia folder `rm -rf .julia`(keep a copy in case you need to)
 5) `export JULIA_DEPOT_PATH="/home/username/.julia"`
 6) Launch julia, add packages you want and run `]precompile` to precompile everything
-8) Exit julia, and transfer your .julia directory to IRENE with `rsync -rvazh .julia/ username@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/username/.julia/` (check that there is a .julia folder in IRENE).
+8) Exit julia, and transfer your .julia directory to IRENE with `rsync -rvazh .julia/ username@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/username/.julia/` (check that there is a .julia folder in IRENE). As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:.julia/ .julia/` from the home directory on IRENE.
 10) `module load julia`
-11) `export JULIA_DEPOT_PATH="/ccc/cont003/dsku/blanchet/home/user/unipdide/username/.julia"` (replace username by your username!)
+11) `export JULIA_DEPOT_PATH="/ccc/cont003/home/unipdide/deniszak/.julia"` (replace username by your username!)
 12) Run julia, check with `]status` that you have the desired packages and have fun!
 
 If you're a bit lazy you can ask me (Kaelan) and I can send you a compressed file that contains the following packages:
