@@ -8,10 +8,10 @@ Since we are now many adepts of th-top, sometimes we have to wait in the virtual
 
 IRENE does not have internet access, so you will not be able to add packages to julia in the usual way. 
 
-To do so, one can use Docker, that generates self-contained images for applications like julia. Follow these steps:
+To do so, one can use Docker, that generates self-contained images for applications like julia. Follow these steps (takes ~15 mins in total):
 
 1) Install docker. On MacOS: https://docs.docker.com/docker-for-mac/install/
-2) create a directory `$cd julia-ctr`
+2) create a directory: `$ cd julia-ctr`
 3) Create a file named "Dockerfile", that contains the following:
 ```
 FROM julia:latest
@@ -22,7 +22,19 @@ RUN julia -e "import Pkg; Pkg.add(\"QuantumOpticsBase\");Pkg.add(\"QuantumOptics
 ```
 Change your username with your IRENE username, and you can add packages you want with the shown syntax.
 
-4) Build the docker image `$ docker build -t myJuliaCtr`  
+4) Build the docker image: `$ docker build -t myJuliaCtr`  
+5) Compress the image into a tarball: `$ docker save myJuliaCtr -o myJuliaCtr.tar`
+6) send it to th-top (put your th-top username): `scp myJuliaCtr.tar username@th-top.mpq.univ-paris-diderot.fr:/home/username/`
+7) send it to IRENE, in the work directory (put your IRENE username): `scp myJuliaCtr.tar username@irene-amd-fr.ccc.cea.fr:/ccc/work/cont003/gen12462/username`
+8) connect to IRENE
+9) `$ cd /ccc/work/cont003/gen12462/username/`
+10) `$ mkdir depot`
+11) `$ ml sw dfldatadir/gen12462`
+12) Import the image: `pcocc image import docker-archive:myJuliaCtr.tar myJuliaCtr`
+13) 
+
+
+
 
 1) connect to th-top
 2) `module unload julia`
@@ -30,16 +42,10 @@ Change your username with your IRENE username, and you can add packages you want
 4) Remove components of your .julia folder belonging to the version 1.5 `rm -rf .julia/environments/v1.5* ; rm -rf .julia/compiled/v1.5*`(keep a copy in case you need to)
 5) `export JULIA_DEPOT_PATH="/home/username/.julia"`
 6) Launch julia, add packages you want and run `]precompile` to precompile everything
-8) Exit julia, and transfer your .julia directory to IRENE with `rsync -rvazh .julia/ username@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/username/.julia/` (check that there is a .julia folder in IRENE). As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:.julia/ .julia/` from the home directory on IRENE.
-10) `module load julia`
-11) `export JULIA_DEPOT_PATH="/ccc/cont003/home/unipdide/username/.julia"`
-12) Run julia, check with `]status` that you have the desired packages and have fun!
-
-If you're a bit lazy you can ask me (Kaelan) and I can send you a compressed file that contains the following packages:
-
-QuantumOpticsBase, QuantumOptics, LinearAlgebra, SparseArrays, ElasticArrays, Random, Distributions, Statistics, DifferentialEquations, OrdinaryDiffEq, DiffEqBase, DiffEqCallbacks, LightGraphs, Kronecker, IterativeSolvers, LinearMaps, DataStructures, KrylovKit, Interpolations, JLD, JLD2, BSON, Revise, Distributed, LsqFit, Optim, Conda, PyCall, FFTW, AbstractFFTs, ProgressMeter, MLDataUtils, StatsBase, Dates, Flux
-
-Unzip it on your home directory with `tar -xzvf julia_irene.tar.gz -C /ccc/cont003/home/unipdide/username ` and start from step 10.
+7) Exit julia, and transfer your .julia directory to IRENE with `rsync -rvazh .julia/ username@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/username/.julia/` (check that there is a .julia folder in IRENE). As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:.julia/ .julia/` from the home directory on IRENE.
+8) `module load julia`
+9) `export JULIA_DEPOT_PATH="/ccc/cont003/home/unipdide/username/.julia"`
+10) Run julia, check with `]status` that you have the desired packages and have fun!
 
 ### Submitting a job
 
