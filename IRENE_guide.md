@@ -8,7 +8,21 @@ Since we are now many adepts of th-top, sometimes we have to wait in the virtual
 
 IRENE does not have internet access, so you will not be able to add packages to julia in the usual way. 
 
-To do so, follow these steps in the right order (and replace username with your username, don't just copy and run the lines, especially those with `export`):
+To do so, one can use Docker, that generates self-contained images for applications like julia. Follow these steps:
+
+1) Install docker. On MacOS: https://docs.docker.com/docker-for-mac/install/
+2) create a directory `$cd julia-ctr
+3) Create a file named "Dockerfile", that contains the following:
+```
+FROM julia:latest
+
+ENV JULIA_DEPOT_PATH="/ccc/work/cont003/gen12462/username/depot"
+
+RUN julia -e "import Pkg; Pkg.add(\"QuantumOpticsBase\");Pkg.add(\"QuantumOptics\");Pkg.add(\"LinearAlgebra\");Pkg.add(\"SparseArrays\");Pkg.add(\"ElasticArrays\");Pkg.add(\"Random\");Pkg.add(\"Distributions\");Pkg.add(\"Statistics\");Pkg.add(\"DifferentialEquations\");Pkg.add(\"OrdinaryDiffEq\");Pkg.add(\"DiffEqBase\");Pkg.add(\"DiffEqCallbacks\");Pkg.add(\"LightGraphs\");Pkg.add(\"Kronecker\");Pkg.add(\"IterativeSolvers\");Pkg.add(\"LinearMaps\");Pkg.add(\"DataStructures\");Pkg.add(\"KrylovKit\");Pkg.add(\"Interpolations\");Pkg.add(\"JLD\");Pkg.add(\"JLD2\");Pkg.add(\"BSON\");Pkg.add(\"Revise\");Pkg.add(\"Distributed\");Pkg.add(\"LsqFit\");Pkg.add(\"Optim\");Pkg.add(\"Conda\");Pkg.add(\"PyCall\");Pkg.add(\"FFTW\");Pkg.add(\"AbstractFFTs\");Pkg.add(\"ProgressMeter\");Pkg.add(\"MLDataUtils\");Pkg.add(\"StatsBase\");Pkg.add(\"Dates\");Pkg.add(\"Flux\"); Pkg.instantiate();Pkg.precompile()"
+```
+Change your username with your IRENE username, and you can add packages you want with the shown syntax.
+
+4) Build the docker image `$ docker build -t myJuliaCtr`  
 
 1) connect to th-top
 2) `module unload julia`
