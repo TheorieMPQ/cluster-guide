@@ -24,13 +24,13 @@ Change your username with your IRENE username, and you can add packages you want
 
 4) Build the docker image: `$ docker build -t myJuliaCtr`  
 5) Compress the image into a tarball: `$ docker save myJuliaCtr -o myJuliaCtr.tar`
-6) send it to th-top (put your th-top username): `scp myJuliaCtr.tar username@th-top.mpq.univ-paris-diderot.fr:/home/username/`
-7) send it to IRENE, in the work directory (put your IRENE username): `scp myJuliaCtr.tar username@irene-amd-fr.ccc.cea.fr:/ccc/work/cont003/gen12462/username`
+6) send it to th-top (put your th-top username): `$ scp myJuliaCtr.tar username@th-top.mpq.univ-paris-diderot.fr:/home/username/`
+7) send it to IRENE, in the work directory (put your IRENE username): `$ scp myJuliaCtr.tar username@irene-amd-fr.ccc.cea.fr:/ccc/work/cont003/gen12462/username`
 8) connect to IRENE
 9) `$ cd /ccc/work/cont003/gen12462/username/`
 10) `$ mkdir depot`
 11) `$ ml sw dfldatadir/gen12462`
-12) Import the image: `pcocc image import docker-archive:myJuliaCtr.tar myJuliaCtr`
+12) Import the image: `$ pcocc image import docker-archive:myJuliaCtr.tar myJuliaCtr`
 13) Run it: `$ pcocc run -s -I myJuliaCtr --pty`
 
 To see how to run a job with `pcocc`, section 19 of `machine.info` explains it.
