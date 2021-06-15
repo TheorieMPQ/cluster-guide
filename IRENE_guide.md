@@ -11,7 +11,7 @@ IRENE does not have internet access, so you will not be able to add packages to 
 To do so, one can use Docker, that generates self-contained images for applications like julia. Follow these steps:
 
 1) Install docker. On MacOS: https://docs.docker.com/docker-for-mac/install/
-2) create a directory `$cd julia-ctr
+2) create a directory `$cd julia-ctr`
 3) Create a file named "Dockerfile", that contains the following:
 ```
 FROM julia:latest
