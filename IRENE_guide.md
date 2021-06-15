@@ -31,9 +31,12 @@ Change your username with your IRENE username, and you can add packages you want
 10) `$ mkdir depot`
 11) `$ ml sw dfldatadir/gen12462`
 12) Import the image: `pcocc image import docker-archive:myJuliaCtr.tar myJuliaCtr`
-13) 
+13) Run it: `$ pcocc run -s -I myJuliaCtr --pty`
+
+To see how to run a job with `pcocc`, section 19 of `machine.info` explains it.
 
 
+### Alternative installation (does not work for DifferentialEquations.jl, QuantumOptics.jl, and many others)
 
 
 1) connect to th-top
