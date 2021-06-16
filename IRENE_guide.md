@@ -16,7 +16,8 @@ To do so, one can use Docker, that generates self-contained images for applicati
 ```
 FROM julia:latest
 
-ENV JULIA_DEPOT_PATH="/ccc/work/cont003/gen12462/username/depot"
+RUN mkdir /depot
+ENV JULIA_DEPOT_PATH="/depot"
 
 RUN julia -e "import Pkg; Pkg.add(\"QuantumOpticsBase\");Pkg.add(\"QuantumOptics\");Pkg.add(\"LinearAlgebra\");Pkg.add(\"SparseArrays\");Pkg.add(\"ElasticArrays\");Pkg.add(\"Random\");Pkg.add(\"Distributions\");Pkg.add(\"Statistics\");Pkg.add(\"DifferentialEquations\");Pkg.add(\"OrdinaryDiffEq\");Pkg.add(\"DiffEqBase\");Pkg.add(\"DiffEqCallbacks\");Pkg.add(\"LightGraphs\");Pkg.add(\"Kronecker\");Pkg.add(\"IterativeSolvers\");Pkg.add(\"LinearMaps\");Pkg.add(\"DataStructures\");Pkg.add(\"KrylovKit\");Pkg.add(\"Interpolations\");Pkg.add(\"JLD\");Pkg.add(\"JLD2\");Pkg.add(\"BSON\");Pkg.add(\"Revise\");Pkg.add(\"Distributed\");Pkg.add(\"LsqFit\");Pkg.add(\"Optim\");Pkg.add(\"Conda\");Pkg.add(\"PyCall\");Pkg.add(\"FFTW\");Pkg.add(\"AbstractFFTs\");Pkg.add(\"ProgressMeter\");Pkg.add(\"MLDataUtils\");Pkg.add(\"StatsBase\");Pkg.add(\"Dates\");Pkg.add(\"Flux\"); Pkg.instantiate();Pkg.precompile()"
 ```
@@ -28,10 +29,9 @@ Change your username with your IRENE username, and you can add packages you want
 7) send it to IRENE, in the work directory (put your IRENE username): `$ scp myJuliaCtr.tar username@irene-amd-fr.ccc.cea.fr:/ccc/work/cont003/gen12462/username`
 8) connect to IRENE
 9) `$ cd /ccc/work/cont003/gen12462/username/`
-10) `$ mkdir depot`
-11) `$ ml sw dfldatadir/gen12462`
-12) Import the image: `$ pcocc image import docker-archive:myJuliaCtr.tar myJuliaCtr`
-13) Run it: `$ pcocc run -s -I myJuliaCtr --pty`
+10) `$ ml sw dfldatadir/gen12462`
+11) Import the image: `$ pcocc image import docker-archive:myJuliaCtr.tar myJuliaCtr`
+12) Run it: `$ pcocc run -s -I myJuliaCtr --pty`
 
 To see how to run a job with `pcocc`, section 19 of `machine.info` explains it.
 
