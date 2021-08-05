@@ -45,9 +45,11 @@ Here is an example of a script:
 #MSUB -o juliaTest.out
 #MSUB -e juliaTest.err 
 #MSUB -n 1
+
+cd && module switch dfldatadir/gen12462 && cd
 echo "running a job" 
-$HOME/julia-1.6.2/bin/julia $HOME/JULIA_FILE_NAME.jl
+$HOME/julia-1.6.2/bin/julia $CCCWORKDIR/JULIA_FILE_NAME.jl
 ```
 
-`$HOME` is the environment variable that stores the path of your home directory. Note that there is no need to load Julia as we are using our own downloaded version, just  call the path to the executable (`$HOME/julia-1.6.2/bin/julia` in this example). `-T` is the time limit in seconds (if not specified default is 7200), and `-n` is the number of processors. You can run your job with `ccc_msub my_script`, and obtain information about it with `ccc_mpeek job_id`, or see the status of all your jobs with `ccc_mstat -s USERNAME`. The command `ccc_mpp`is like `qstat` on th-top, but here it is useless since too many jobs are running. 
+`$HOME` is the environment variable that stores the path of your home directory. `module switch dfldatadir/gen12462` changes the data space and allows access to the work directory by `$CCCWORKDIR` (which has more space, so it is highly recommanded to put the julia script and its outputs in this directory). Note that there is no need to load Julia as we are using our own downloaded version, just  call the path to the executable (`$HOME/julia-1.6.2/bin/julia` in this example). `-T` is the time limit in seconds (if not specified default is 7200), and `-n` is the number of processors. You can run your job with `ccc_msub my_script`, and obtain information about it with `ccc_mpeek job_id`, kill it with `ccc_mdel job_id`, or see the status of all your jobs with `ccc_mpp -u $(whoami)`. The command `ccc_mpp`is like `qstat` on th-top, but here it is useless without specifying the user since too many jobs are running. 
 For more information, type `machine.info` in IRENE or visit this page https://forge.ipsl.jussieu.fr/igcmg_doc/wiki/Doc/ComputingCenters/TGCC/Irene.
