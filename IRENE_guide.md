@@ -14,23 +14,23 @@ To do so, follow these steps:
 
 1) connect to th-top
 2) `module unload julia`
-3) Create a temporary directory (by default it is `.julia/`) where we will install the Julia packages by exporting the `JULIA_DEPOT_PATH` environment variable, for example   
-`export JULIA_DEPOT_PATH="/home/YOUR-USERNAME-ON-TH-TOP/temp/.julia"`
-5) Download a linux x86_64 build of Julia. ( The version doesn't matter, as julia runs stand-alone-ly. As an example we'll use 1.6 here. ) `wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.2-linux-x86_64.tar.gz`
-6) Decompress: `tar zxvf julia-1.6.2-linux-x86_64.tar.gz`
-8) Launch julia with `julia-1.6.2/bin/julia`, add packages you want and run `]precompile` to precompile everything
-9) Exit julia, and transfer your temporary `.julia` directory to IRENE. It is strongly recommended to compress it first: 
+3) Create a temporary directory, for example `mkdir -p temp/.julia`, where we will install the Julia packages (by default it is `.julia/`) and then export the `JULIA_DEPOT_PATH` environment variable, for example   
+`export JULIA_DEPOT_PATH="/home/YOUR-USERNAME-ON-TH-TOP/temp/.julia"` (this command only affects the current session and won't overwrite your shell configuration).
+4) Download a linux x86_64 build of Julia. ( The version doesn't matter, as julia runs stand-alone-ly. As an example we'll use 1.6 here. ) `wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.2-linux-x86_64.tar.gz`
+5) Decompress: `tar zxvf julia-1.6.2-linux-x86_64.tar.gz`
+6) Launch julia with `julia-1.6.2/bin/julia`, add packages you want and run `]precompile` to precompile everything
+7) Exit julia, and transfer your temporary `.julia` directory to IRENE. It is strongly recommended to compress it first: 
 `tar -czvf temp/pointjulia.tar.gz -C temp/ .julia` and then transfer with 
 with `rsync -rvazh temp/pointjulia.tar.gz USERNAME@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/USERNAME/`. Finally, on IRENE, extract the files with `tar xzvf pointjulia.tar.gz`, which will release the files in your `$HOME/.julia/` folder. As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:temp/pointjulia.tar.gz .` (don't forget the final dot in the command) from the home directory on IRENE, and then extract. 
-11) Transfer the `julia-1.6.2` directory to IRENE, compress it with `tar` if too slow.
-12) Connect to Irene
-13) launch julia with `julia-1.6.2/bin/julia`, and precompile everything `]precompile`
-14) Check with `using ...` that you have your desired packages and have fun!
+8) Transfer the `julia-1.6.2` directory to IRENE, compress it with `tar` if too slow.
+9) Connect to Irene
+10) launch julia with `julia-1.6.2/bin/julia`, and precompile everything `]precompile`
+11) Check with `using ...` that you have your desired packages and have fun!
 
 If later you want to install more packages, just do the following
 1) on th-top, `export JULIA_DEPOT_PATH="/home/YOUR-USERNAME-ON-TH-TOP/temp/.julia"`
 2) Lauch the julia that you downloaded earlier `julia-1.6.2/bin/julia`, add packages and `]precompile'
-3) do step 9) above. (No need to transfer the `julia-1.6.2` folder again, just the `.julia` matters here.)
+3) do step 7) above. (No need to transfer the `julia-1.6.2` folder again, just the `.julia` matters here.)
 4) On IRENE, have fun with `julia-1.6.2/bin/julia`!
 
 ### Submitting a job
