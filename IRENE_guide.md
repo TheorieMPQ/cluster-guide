@@ -48,12 +48,12 @@ To properly install `PyCall` and `Conda` on IRENE, we need to first install anac
 10) lauch your julia `julia-1.6.2/bin/julia` and edit the environment variables according to the paths that you noted down previously. 
  `ENV["CONDA_JL_HOME"] = "/path/to/anaconda/envs/conda_jl"`    
 `ENV["PYTHON"] = "/path/to/anaconda/bin/python"`.   
-If you followed all the steps till now, the paths should be   
+If you followed all the steps so far, the paths should be   
  `ENV["CONDA_JL_HOME"] = "/ccc/cont003/home/unipdide/USERNAME/anaconda3/envs/conda_jl"`    
 `ENV["PYTHON"] = "/ccc/cont003/home/unipdide/USERNAME/anaconda3/bin/python"`.   
 (these modifications to the environment variables only affect the current session.)
 11) `]build Conda`, `]build Pycall` and finally `]precompile`.
-12) If there are no errors till now, have fun !
+12) If there are no errors so far, have fun !
 
 
 ### Submitting a job
