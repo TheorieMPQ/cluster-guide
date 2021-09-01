@@ -18,14 +18,14 @@ To do so, follow these steps:
 `export JULIA_DEPOT_PATH="/home/YOUR-USERNAME-ON-TH-TOP/temp/.julia"` (this command only affects the current session and won't overwrite your shell configuration).
 4) Download a linux x86_64 build of Julia. ( The version doesn't matter, as julia runs stand-alone-ly. As an example we'll use 1.6 here. ) `wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.2-linux-x86_64.tar.gz`
 5) Decompress: `tar zxvf julia-1.6.2-linux-x86_64.tar.gz`
-6) Launch julia with `julia-1.6.2/bin/julia`, add packages you want and run `]precompile` to precompile everything
+6) Launch julia with `julia-1.6.2/bin/julia`, add packages you want and run `]precompile` to precompile everything. _Warning: if you need to install Conda, PyCall, or packages that require them, refer to the section below._
 7) Exit julia, and transfer your temporary `.julia` directory to IRENE. It is strongly recommended to compress it first: 
 `tar -czvf temp/pointjulia.tar.gz -C temp/ .julia` and then transfer with 
 with `rsync -rvazh temp/pointjulia.tar.gz USERNAME@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/USERNAME/`. Finally, on IRENE, extract the files with `tar xzvf pointjulia.tar.gz`, which will release the files in your `$HOME/.julia/` folder. As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:temp/pointjulia.tar.gz .` (don't forget the final dot in the command) from the home directory on IRENE, and then extract. 
 8) Transfer the `julia-1.6.2` directory to IRENE, compress it with `tar` if too slow.
 9) Connect to Irene
 10) launch julia with `julia-1.6.2/bin/julia`, and precompile everything `]precompile`
-11) Check with `using ...` that you have your desired packages and have fun!
+11) Check with `using `... that you have your desired packages and have fun!
 
 If later you want to install more packages, just do the following
 1) on th-top, `export JULIA_DEPOT_PATH="/home/YOUR-USERNAME-ON-TH-TOP/temp/.julia"`
