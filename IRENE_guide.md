@@ -41,7 +41,7 @@ To properly install `PyCall` and `Conda` on IRENE, we need to first install anac
 3) exit Julia and download Anaconda for Linux 64 bit on th-top. In this example we use `wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh`.
 4) transfer the downloaded installer to IRENE with `rsync -rvazh Anaconda3-2021.05-Linux-x86_64.sh USERNAME@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/USERNAME/`
 5) do step 7 above, i.e. compress and transfer the temporary `.julia` directory to IRENE and extract over there.
-6) on IRENE, run the Anaconda installer with `bash Anaconda3-2021.05-Linux-x86_64.sh`, follow the instructions and complete the installation.
+6) on IRENE, run the Anaconda installer with `bash Anaconda3-2021.05-Linux-x86_64.sh`. Note that when the installer asks for the installation directory, it is highly recommended to put `/ccc/work/cont003/gen12462/USERNAME/anaconda3` as the `work` directory has much more disk quota than `home`. Follow the instructions and complete the installation.
 7) disconnect from IRENE and reconnect to make the Anaconda installation take effect.
 8) check that Anaconda has been properly installed. You can find the path to `conda` (`python`) with `which conda` (resp. `which python`). Note down the full paths.
 9) Create a new conda environment for julia with `conda create -n conda_jl --clone root`.
@@ -49,8 +49,8 @@ To properly install `PyCall` and `Conda` on IRENE, we need to first install anac
  `ENV["CONDA_JL_HOME"] = "/path/to/anaconda/envs/conda_jl"`    
 `ENV["PYTHON"] = "/path/to/anaconda/bin/python"`.   
 If you followed all the steps so far, the paths should be   
- `ENV["CONDA_JL_HOME"] = "/ccc/cont003/home/unipdide/USERNAME/anaconda3/envs/conda_jl"`    
-`ENV["PYTHON"] = "/ccc/cont003/home/unipdide/USERNAME/anaconda3/bin/python"`.   
+ `ENV["CONDA_JL_HOME"] = "/ccc/work/cont003/gen12462/USERNAME/anaconda3/envs/conda_jl"`    
+`ENV["PYTHON"] = "/ccc/work/cont003/gen12462/USERNAME/anaconda3/bin/python"`.   
 (these modifications to the environment variables only affect the current session.)
 11) `]build Conda`, `]build Pycall` and finally `]precompile`.
 12) If there are no errors so far, have fun !
