@@ -50,7 +50,7 @@ To properly install `PyCall` and `Conda` on IRENE, we need to first install anac
 `ENV["PYTHON"] = "/path/to/anaconda/bin/python"`.   
 If you followed all the steps till now, the paths should be   
  `ENV["CONDA_JL_HOME"] = "/ccc/cont003/home/unipdide/USERNAME/anaconda3/envs/conda_jl"`    
-`ENV["PYTHON"] = "/ccc/cont003/home/unipdide/lizejian/anaconda3/bin/python"`.   
+`ENV["PYTHON"] = "/ccc/cont003/home/unipdide/USERNAME/anaconda3/bin/python"`.   
 (these modifications to the environment variables only affect the current session.)
 11) `]build Conda`, `]build Pycall` and finally `]precompile`.
 12) If there are no errors till now, have fun !
