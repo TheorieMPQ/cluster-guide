@@ -55,6 +55,11 @@ If you followed all the steps so far, the paths should be
 11) `]build Conda`, `]build Pycall` and finally `]precompile`.
 12) If there are no errors so far, have fun !
 
+NOTE: after installing Anaconda, the default `env python` will become Anaconda python. This may cause certain `ccc...` scripts that requires `python2` to fail, such as `ccc_quota`. To fix this, we have to remove Anaconda python from the `$PATH` variable.  This can be done (for the current session) by running
+```
+export PATH=`echo $PATH | tr ":" "\n" | grep -v "anaconda" | tr "\n" ":"`
+```
+This will temporarily revert the default `python` and `ccc_quota` should work as expected. Note that to show the quota for all filesystems, we need to load them with `module switch dfldatadir/gen12462` before calling `ccc_quota`.
 
 ### Submitting a job
 
