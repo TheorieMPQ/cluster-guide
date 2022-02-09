@@ -4,6 +4,19 @@ Since we are now many adepts of th-top, sometimes we have to wait in the virtual
 
 *Access to IRENE: you need to complete a form and ask Cristiano and Loïc Noël, our IT responsible, to sign it.*
 
+### Storage systems on IRENE, quota, groups and ownership
+
+There are different accessible data spaces on IRENE, each coming with its own quota and specific rules. For details about this data spaces [see the doc](http://www-hpc.cea.fr/docs/userdoc-tgcc-public.pdf). 
+
+1) Home directory:
+
+- When you connect to IRENE you end up by default on your "home" directory. The exact path to this directory is stored in the variables HOME or CCFRHOME. The quota on this directory is small (5GB per user), but unlike other directories "home" is saved and not purged, so it must be used to store important files such as source code.
+
+2) Work directory
+
+- When working on IRENE it is preferable to use the "work" folder, which can be accessed by `cd $CCCWORKDIR` or `cd $CCFRWORK`. The quota policy on "work" is of 5 TB and 500 000 files/user. This file system is not purged but it is also not saved, so remember to make regular backups. 
+- For a file (or a directory) to be correctly taken into account for the quotas on "work", it must be owned by the project group (gen12462 in our case) and be granted the group rights. To check the ownership and permissions of files in a given directory use the command `ls -l`. To change the group of a file: `chown :<your_group> <your_directory_or_file>` (you can add the `-R`option to do this recursively on a given directory content). To grant group permission to a file use: `chmod g+s <your_directory_or_file>` (more details about this special permissions can be found [here](https://learning.lpi.org/en/learning-materials/010-160/5/5.3/5.3_01/)). Especially if you transfer files with rsync, you might need to add the following options to your rsync command: `--chown=:<your_group>`and  `--chmod=g+s`(or `--chmod=Dg+s` if you transfer a directory).
+
 ### Package installation
 
 IRENE does not have internet access, so you will not be able to add packages to julia in the usual way. Luckily IRENE runs the same operating system as our th-top (linux x86_64), which means we can transfer installed packages from th-top to IRENE.
