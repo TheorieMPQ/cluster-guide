@@ -37,7 +37,7 @@ To do so, follow these steps:
 with `rsync -rvazh temp/pointjulia.tar.gz USERNAME@irene-amd-fr.ccc.cea.fr:/ccc/cont003/home/unipdide/USERNAME/`. Finally, on IRENE, extract the files with `tar xzvf pointjulia.tar.gz`, which will release the files in your `$HOME/.julia/` folder. As an alternative, one may instead issue `rsync -rvazh username@th-top.mpq.univ-paris-diderot.fr:temp/pointjulia.tar.gz .` (don't forget the final dot in the command) from the home directory on IRENE, and then extract. 
 8) Transfer the `julia-1.6.2` directory to IRENE, compress it with `tar` if too slow.
 9) Connect to Irene
-10) launch julia with `julia-1.6.2/bin/julia`, and precompile everything `]precompile`
+10) launch julia with `julia-1.6.2/bin/julia`, and precompile everything `]precompile`. At this point the precompilation might fail. If this appends, try to use conda (see next section). This might help as conda and Conda.jl provides a batch of binary libraries, which absence could explain the failure of the precompilation.
 11) Check with `using `... that you have your desired packages and have fun!
 
 If later you want to install more packages, just do the following
