@@ -14,6 +14,8 @@ In order to avoid having to do that at each login, one can append these commands
 $ echo "module load <module_name>" >> ~/.bash_profile
 ```
 
+## Using `python
+
 
 ## Syncronisation of directories from th-top to local computer
 rsync -avzhe ssh YOURLOGIN@th-top.mpq.univ-paris-diderot.fr:/home/YOURLOGIN/YOURDIRECTORY/ /Users/YOURLOCALLOGIN/YOURDIRECTORY/
@@ -23,9 +25,9 @@ This command will copy all the directory from the remote server (in this case th
 
 #### Examples
 ```shell
-$ module load anaconda-python
+$ module load anaconda
 ```
-Loads the last `python` distribution (`anaconda-python`).
+Loads anaconda, which contains python and conda.
 
 ```shell
 $ module load julia
@@ -33,9 +35,9 @@ $ module load julia
 Load default version of `julia`.
 
 ```shell
-$ module load julia/1.2.0
+$ module load julia/1.6.1
 ```
-Load `julia` v1.2.0.
+Load `julia` v1.6.1.
 
 ## Submitting jobs via `sbatch`
 th-top is not like a standard desktop computer, but it is a system composed by a master server managing 6 nodes, 4 nodes with 20 CPU cores and 2 nodes with 20 CPU cores and 3 GPUs.
