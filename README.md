@@ -1,5 +1,5 @@
 # cluster-guide
-A guide to using clusters in general (and th-top in particular)
+A guide to using th-top.
 
 ## Loading modules
 
