@@ -62,7 +62,7 @@ Running computations on such systems is a bit different than usual, and it will 
 All nodes and the master share the same folders and filesystem.
 When you log in via ssh you will be connected to the master node.
 
-A computation to be executed on th-top is called a job. A job can be standard, if it does not require user's intervention and is completely specified by a series of commands that the computer can run itself, or it can be interactive, letting you execute operations through the terminal like a standard terminal session on your desktop computer or `thX`. When one job is submitted through master, it gets queued till ressources are available and may not start instantly if all nodes are busy.
+A computation to be executed on th-top is called a job. A job can be standard, if it does not require user's intervention and is completely specified by a series of commands that the computer can run itself, or it can be interactive, letting you execute operations through the terminal like a standard terminal session on your desktop computer or th-top. When one job is submitted through master, it gets queued till ressources are available and may not start instantly if all nodes are busy.
 
 
 ### Launching batch jobs
