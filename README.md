@@ -76,7 +76,7 @@ This file, here called e.g. `myjob`, should look somehow like the following exam
 #SBATCH --job-name=name 
 #SBATCH -o name.out #file in which the output of code.jl is written
 #SBATCH -e name.err #file in which the error log is written
-#SBATCH -N 1 #number of cpunodes used 
+#SBATCH -N 1 #number of compute nodes used 
 #SBATCH -n 2 #number of MPI processes used
 #SBATCH --mem=10G #total memory allocated
 
