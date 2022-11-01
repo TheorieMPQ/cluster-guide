@@ -16,10 +16,14 @@ $ echo "module load <module_name>" >> ~/.bash_profile
 
 ## Using `python`
 
-To use python in your `/home` directory, the best thing to do is to install a virtual environment with conda, whose location will be in your `home`. To do so, execute the following lines of code:
-
+To use python in your `/home` directory, the best thing to do is to install a virtual environment with conda, whose location will be in your `home`. If you want to do so, the first time you log in, run 
 ```
 module load anaconda
+conda init
+```
+log out, and log back in to initialize `conda`. To create a local environment, execute the following lines of code:
+
+```
 conda create -p /home/username/env_name
 ```
 with `env_name` the name of your `conda` environment (you can of course specify the path you want). This allows you to manage your packages locally and install anything you want without perturbing anaconda module installed for everyone. Then, you can enter your environment using
@@ -79,8 +83,6 @@ This file, here called e.g. `myjob`, should look somehow like the following exam
 echo "running a job"
 module load julia
 julia /home/username/code.jl
-
-
 ```
 
 To launch a python script with a local conda environment `env_name`, replace 
@@ -89,14 +91,11 @@ module load julia
 julia /home/username/code.jl
 ```
 with
-
-
 ```
 source /opt/ohpc/pub/apps/anaconda3
 conda activate env_name
 python /home/username/code.py
 ```
-
 
 The job can then be launched by running
 ```shell
@@ -121,7 +120,7 @@ Connect via the web browser to `localhost:8090`
 
 Enter login and password for th-top on the login window.
 
-Now you are on Jupiter. 
+Now you are on Jupyter. 
 First, you have to choose how many cores you want to use for your job.
 
 To see the directory tree: `http://localhost:8090/user/YOURLOGIN/tree?`
