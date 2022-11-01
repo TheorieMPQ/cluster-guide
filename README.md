@@ -37,8 +37,8 @@ $ module load julia/1.2.0
 ```
 Load `julia` v1.2.0.
 
-## Submitting jobs via `qsub`
-Th-top is not like a standard desktop computer, but it is a system composed by a master server managing 6 nodes, 4 nodes with 20 CPU cores and 2 nodes with 20 CPU cores and 3 GPUs.
+## Submitting jobs via `sbatch`
+th-top is not like a standard desktop computer, but it is a system composed by a master server managing 6 nodes, 4 nodes with 20 CPU cores and 2 nodes with 20 CPU cores and 3 GPUs.
 Running computations on such systems is a bit different than usual, and it will be explained below.
 
 All nodes and the master share the same folders and filesystem.
@@ -46,7 +46,38 @@ When you log in via ssh you will be connected to the master node.
 
 A computation to be executed on th-top is called a job. A job can be standard, if it does not require user's intervention and is completely specified by a series of commands that the computer can run itself, or it can be interactive, letting you execute operations through the terminal like a standard terminal session on your desktop computer or `thX`. When one job is submitted through master, it gets queued till ressources are available and may not start instantly if all nodes are busy.
 
-A complete guide can be found [here](https://wikis.nyu.edu/display/NYUHPC/Copy+of+Tutorial+-+Submitting+a+job+using+qsub).
+
+### Launching batch jobs
+
+A batch job is a job that runs autonomously without requiring any human intervention. To submit a batch job, a small bash file containing all the commands to be executed together with information about the ressources to be allocated by master is to be created.
+
+This file, here called e.g. `myjob`, should look somehow like the following example using julia:
+```
+#!/bin/bash
+
+#SBATCH --job-name=name 
+#SBATCH -o name.out #file in which the output of code.jl is written
+#SBATCH -e name.err #file in which the error log is written
+#SBATCH -N 1 #number of cpunodes used 
+#SBATCH -n 6 #number of MPI processes used
+#SBATCH --mem=10G #total memory allocated
+
+echo "running a job"
+module load julia
+julia /home/username/code.jl 10 4
+
+
+```
+
+The job can then be launched by running
+```shell
+$ sbatch myjob
+```
+Its status can be checked with
+```shell
+$ squeue
+```
+A more complete sex of examples and precisions can be found here: https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html.
 
 ### Jupiter interacting notebook 
 
@@ -95,66 +126,15 @@ Start a job in interactive mode (`-I`) on 10 CPUs and 1 GPU with specific maximu
 Unavailable ressources cannot be allocated. e.g. asking for 30 CPUs will cause the job to never start because no node has 30 CPUs.
 This is particularily tricky with RAM, you can check the ressources available on any node by refering to the relevant section of this guide.
 
-### Launching batch jobs
+## Getting information about resources available on each node
 
-A batch job is a job that runs autonomously without requiring any human intervention. To submit a batch job, a small bash file containing all the commands to be executed together with information about the ressources to be allocated by master is to be created.
-
-This file, here called e.g. `myjob`, should look somehow like the following example:
-```
-#!/bin/bash
-#PBS -N juliaTest
-#PBS -o juliaTest.out
-#PBS -e juliaTest.err
-#PBS -l select=1:ncpus=10:mem=XXXG
-
-echo "running a job!"
-    
-julia  ~/myscript.jl
-```
-
-The job can then be launched by running
-```shell
-$ qsub myjob
-```
-Its status can be checked with
-```shell
-$ qstat
-```
-
-## Getting information about ressources available on each node
-
-```shell
-$ pbsnodes <nodename>
-```
-for `<nodename>` in `{node0, node1… node3, gpunode0, gpunode1}` (in th-top).
+One can use the command `sinfo` to gain information about resources. For more info, use `sinfo --help` for a list of commands that will modify the output of `sinfo`.
 
 #### Example
 ```shell
-$ pbsnodes gpunode1
+$ sinfo 
 
-gpunode1
-     Mom = gpunode1.alineos.net
-     ntype = PBS
-     state = free
-     pcpus = 24
-     Priority = 100
-     resources_available.arch = linux
-     resources_available.host = gpunode1
-     resources_available.mem = 97586176kb
-     resources_available.ncpus = 24
-     resources_available.ngpus = 3
-     resources_available.vmem = 105908224kb
-     resources_available.vnode = gpunode1
-     resources_available.vntype = gpu_node
-     resources_assigned.accelerator_memory = 0kb
-     resources_assigned.hbmem = 0kb
-     resources_assigned.mem = 0kb
-     resources_assigned.naccelerators = 0
-     resources_assigned.ncpus = 0
-     resources_assigned.ngpus = 0
-     resources_assigned.vmem = 0kb
-     resv_enable = True
-     sharing = default_shared
-     last_state_change_time = Fri Aug  9 12:58:31 2019
-     last_used_time = Wed Sep 25 18:33:42 2019
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+cpu*         up   infinite      4   idle c[1-4]
+gpu          up   infinite      2   idle g[1-2]
 ```
