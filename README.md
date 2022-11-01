@@ -14,7 +14,7 @@ In order to avoid having to do that at each login, one can append these commands
 $ echo "module load <module_name>" >> ~/.bash_profile
 ```
 
-## Using `python
+## Using `python`
 
 
 ## Syncronisation of directories from th-top to local computer
