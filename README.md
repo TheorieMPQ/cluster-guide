@@ -16,6 +16,18 @@ $ echo "module load <module_name>" >> ~/.bash_profile
 
 ## Using `python`
 
+To use python in your `/home` directory, the best thing to do is to install a virtual environment with conda, whose location will be in your `home`. To do so, execute the following lines of code:
+
+```
+module load anaconda
+conda create -p /home/username/env_name
+```
+with `env_name` the name of your `conda` environment (you can of course specify the path you want). This allows you to manage your packages locally and install anything you want without perturbing anaconda module installed for everyone. Then, you can enter your environment using
+
+```
+conda activate env_name
+```
+and install packages as you would usually do. 
 
 ## Syncronisation of directories from th-top to local computer
 rsync -avzhe ssh YOURLOGIN@th-top.mpq.univ-paris-diderot.fr:/home/YOURLOGIN/YOURDIRECTORY/ /Users/YOURLOCALLOGIN/YOURDIRECTORY/
@@ -61,15 +73,30 @@ This file, here called e.g. `myjob`, should look somehow like the following exam
 #SBATCH -o name.out #file in which the output of code.jl is written
 #SBATCH -e name.err #file in which the error log is written
 #SBATCH -N 1 #number of cpunodes used 
-#SBATCH -n 6 #number of MPI processes used
+#SBATCH -n 2 #number of MPI processes used
 #SBATCH --mem=10G #total memory allocated
 
 echo "running a job"
 module load julia
-julia /home/username/code.jl 10 4
+julia /home/username/code.jl
 
 
 ```
+
+To launch a python script with a local conda environment `env_name`, replace 
+```
+module load julia
+julia /home/username/code.jl
+```
+with
+
+
+```
+source /opt/ohpc/pub/apps/anaconda3
+conda activate env_name
+python /home/username/code.py
+```
+
 
 The job can then be launched by running
 ```shell
@@ -79,7 +106,7 @@ Its status can be checked with
 ```shell
 $ squeue
 ```
-A more complete sex of examples and precisions can be found here: https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html.
+A more complete set of examples and precisions can be found here: https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html.
 
 ### Jupiter interacting notebook 
 
