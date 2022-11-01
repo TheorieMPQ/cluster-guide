@@ -3,7 +3,7 @@ A guide to using clusters in general (and th-top in particular)
 
 ## Loading modules
 
-Th-Top uses modules to load python and Julia. By default users have only anaconda and no julia.
+Th-Top uses modules to load python and Julia. By default users have only anaconda and julia.
 These can be loaded using the following command:
 ```shell
 $ module load <module_name>
