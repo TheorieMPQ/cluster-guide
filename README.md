@@ -77,7 +77,7 @@ This file, here called e.g. `myjob`, should look somehow like the following exam
 #SBATCH -o name.out #file in which the output of code.jl is written
 #SBATCH -e name.err #file in which the error log is written
 #SBATCH -N 1 #number of compute nodes used 
-#SBATCH -n 2 #number of MPI processes used
+#SBATCH -n 2 #number of processes used (don't specify if you don't want to parallelize)
 #SBATCH --mem=10G #total memory allocated
 
 echo "running a job"
@@ -107,7 +107,7 @@ $ squeue
 ```
 A more complete set of examples and precisions can be found here: https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html.
 
-### Jupiter interacting notebook 
+### Jupiter interacting notebook (NOT ACTIVATED FOR NOW)
 
 From your local computer, connect to th-top with the present command:
 ```
