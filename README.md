@@ -107,6 +107,19 @@ $ squeue
 ```
 A more complete set of examples and precisions can be found here: https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html.
 
+## Getting information about resources available on each node
+
+One can use the command `sinfo` to gain information about resources. For more info, use `sinfo --help` for a list of commands that will modify the output of `sinfo`.
+
+#### Example
+```shell
+$ sinfo 
+
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+cpu*         up   infinite      4   idle c[1-4]
+gpu          up   infinite      2   idle g[1-2]
+```
+
 ### Jupiter interacting notebook (NOT ACTIVATED FOR NOW)
 
 From your local computer, connect to th-top with the present command:
@@ -154,15 +167,3 @@ Start a job in interactive mode (`-I`) on 10 CPUs and 1 GPU with specific maximu
 Unavailable ressources cannot be allocated. e.g. asking for 30 CPUs will cause the job to never start because no node has 30 CPUs.
 This is particularily tricky with RAM, you can check the ressources available on any node by refering to the relevant section of this guide.
 
-## Getting information about resources available on each node
-
-One can use the command `sinfo` to gain information about resources. For more info, use `sinfo --help` for a list of commands that will modify the output of `sinfo`.
-
-#### Example
-```shell
-$ sinfo 
-
-PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
-cpu*         up   infinite      4   idle c[1-4]
-gpu          up   infinite      2   idle g[1-2]
-```
