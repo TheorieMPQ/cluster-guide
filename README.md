@@ -92,7 +92,7 @@ julia /home/username/code.jl
 ```
 with
 ```
-source /opt/ohpc/pub/apps/anaconda3
+source /opt/ohpc/pub/apps/anaconda3/etc/profile.d/conda.sh
 conda activate env_name
 python /home/username/code.py
 ```
