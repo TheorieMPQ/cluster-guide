@@ -33,10 +33,10 @@ conda activate env_name
 ```
 and install packages as you would usually do. 
 
-## Syncronisation of directories from th-top to local computer
-rsync -avzhe ssh YOURLOGIN@th-top.mpq.univ-paris-diderot.fr:/home/YOURLOGIN/YOURDIRECTORY/ /Users/YOURLOCALLOGIN/YOURDIRECTORY/
-where YOURLOGIN is the your name on th-top and YOURLOCALLOGIN is the for your local computer.
-This command will copy all the directory from the remote server (in this case th-top) to the local computer.
+## Syncronization of directories from th-top to local computer
+rsync -avzhe ssh username@th-top.mpq.univ-paris-diderot.fr:/home/username/dir/ /Users/local_username/local_dir/
+where username is your name on th-top, local_username is your local username and local_dir is the directory on your local computer.
+This command will copy the directory from the remote server (in this case th-top) to the local computer.
 
 
 #### Examples
