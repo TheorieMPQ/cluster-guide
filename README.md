@@ -29,7 +29,7 @@ conda create -p /home/username/env_name
 with `env_name` the name of your `conda` environment (you can of course specify the path you want). This allows you to manage your packages locally and install anything you want without perturbing anaconda module installed for everyone. Then, you can enter your environment using
 
 ```
-conda activate env_name
+conda activate /home/username/env_name
 ```
 and install packages as you would usually do. 
 
@@ -84,8 +84,7 @@ echo "running a job"
 module load julia
 julia /home/username/code.jl
 ```
-
-To launch a python script with a local conda environment `env_name`, replace 
+To use a GPU, add a line with `#SBATCH --partition=gpu`. To launch a python script with a local conda environment `env_name`, replace 
 ```
 module load julia
 julia /home/username/code.jl
