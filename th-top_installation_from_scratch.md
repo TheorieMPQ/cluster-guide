@@ -1,4 +1,4 @@
-# th-top relaoded
+# th-top reloaded
 
 The software layer of our th-top cluster has been redeployed from scratch thanks to the
 OpenHPC recipe https://github.com/openhpc/ohpc/releases/download/v2.5.GA/Install_guide-Rocky8-Warewulf-SLURM-2.5-x86_64.pdf
