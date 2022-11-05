@@ -16,14 +16,14 @@ Our cluster consists of a master node and 6 worker nodes (2 of which having GPUS
 The physical architecture is very well sumarized in Figure 1 of the guide linked above. The master node has two network interfaces, one connected to the public network for us to access the cluster, and the other connected to a private internal network for the provision and management of the nodes. Each node also has two network interfaces, one used to receive provision information (such as the boot image and shared folders) from the master and the other dedicated to the power management and monitoring of the nodes via the BMC (baseboard management controllers, they are actually independent single-board computers living on the nodes allowing us to, for example, reboot the nodes or change their bios settings without having physical access to them and regardless of their system state).
 
 ### Install OS on the master node
-To follow the OpenHPC recipe, we will install the Rocky8.6 (8.5 in outdated) distribution onto the master node. You will need to find the dvd image
+To follow the OpenHPC recipe, we will install the Rocky8.6 (8.5 is outdated) distribution onto the master node. You will need to find the dvd image
 (for example download here: https://download.rockylinux.org/pub/rocky/8/isos/x86_64/Rocky-8.6-x86_64-minimal.iso) and then make a bootable USB flash drive from it (for example, Windows users can use balenaEtcher). Then go to the server room (at the 6th floors of the Grands Moulins building), plug in the USB and reboot the master node. Don't forget to plug in a keyboard (and a mouse too, a USB hub will help) and keep pressing F11 until you are prompted to select a boot device. Select the USB and start the installation. 
 
 **Remember to set a STRONG password for root. You need to be logged in as root throughout this guide.**
 
 #### hostname and ip setting
 
-During the setup we can setup the hostname ("th-top") and the network interfaces. You should be able to identify which of the interface is for the public network (it will show a public ip automatically upon connection) and the others one is for the internal network with the other nodes. Take note of the names of the interfaces. During our installation we found the internal interface to be called "ens18f1".   
+During the installation we can setup the hostname ("th-top") and the network interfaces. You should be able to identify which of the interface is for the public network (it will show a public ip automatically upon connection) and the others one is for the internal network with the other nodes. Take note of the names of the interfaces. During our installation we found the internal interface to be called "ens18f1".   
 
 Set up two static IP addresses for the internal interface:   
 1) 192.168.1.250, subnet mask: 255.255.255.0 This subnet will be used for provisioning the nodes  
@@ -318,9 +318,9 @@ Epilog=/etc/slurm/slurm.epilog.clean
 GresTypes=gpu
 
 #NODES
-NodeName=c[1-4] CPUs=20 CoresPerSocket=10 ThreadsPerCore=1 RealMemory=128000 State=UNKNOWN
+NodeName=c[1-4] CPUs=20 CoresPerSocket=10 ThreadsPerCore=1 RealMemory=120000 State=UNKNOWN
 
-NodeName=g[1-2] Gres=gpu:3 CPUS=24 CoresPerSocket=12 ThreadsPerCore=1 RealMemory=95000 State=UNKNOWN
+NodeName=g[1-2] Gres=gpu:3 CPUS=24 CoresPerSocket=12 ThreadsPerCore=1 RealMemory=90000 State=UNKNOWN
 
 #PARTITIONS
 PartitionName=cpu Nodes=c[1-4] Default=YES MaxTime=INFINITE State=UP DefMemPerCPU=512 Oversubscribe=NO
