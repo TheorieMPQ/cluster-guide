@@ -769,6 +769,12 @@ pdsh -w c[1-4],g[1-2] 'rm -rf /tmp/.wwgetfile*  &&  /warewulf/bin/wwgetfiles'
 
 ```
 
+**Alternatively**, I added a cron job that runs every 5 minutes by issueing
+```
+echo '*/5 * * * * root wwsh file resync passwd shadow group' > /etc/cron.d/resync_ww_files
+```
+which updates the three files in warewulf database. The nodes themselves also have a cron job (already configured by warewulf) to fetch the files at 5-minute intervals. So if you are not impatient, in at most 10 minutes the user accounts should have been updated across the nodes.
+
 now switch to "test" user:
 ```
 su - test
