@@ -879,3 +879,236 @@ After the reboot, verify `systemctl is-active slurmctld` on master and `pdsh -w 
   
 In the worst-case scenario, the power cut can destroy the master's hard drive and you would need to buy new server-grade harddisks and start over from the very beginning of this guide (which is why it was written). We therefore recommend performing a backup of the master hard drive once a fully-working state of the cluster is established, such that in case of disk failure it suffices to reflash the backup image into the new disk and everything else whould work as usual (the advantage of having a stateless node configuration).
   
+---
+
+# JupyterHub installation
+
+(reference: https://github.com/jupyterhub/jupyterhub-the-hard-way/blob/HEAD/docs/installation-guide-hard.md)
+
+use the system python (version 3.6.8 at the moment of writing this document) to create a virtual environment private to the to-be-installed jupyterhub:  
+`/usr/bin/python3 -m venv /opt/ohpc/pub/apps/jupyterhub`   
+Note that we are installing into a path shared to the nodes via NFS so that the nodes will have access to it upon installation on the master.
+upgrade pip in this environment with  
+`/opt/ohpc/pub/apps/jupyterhub/bin/python3 -m pip install --upgrade pip`  
+Then install packages for jupyterhub  
+`/opt/ohpc/pub/apps/jupyterhub/bin/python3 -m pip install wheel jupyterhub jupyterlab ipywidgets`   
+
+`yum -y install nodejs npm`    
+
+`npm install -g configurable-http-proxy`
+
+Install packages allowing us to spawn jupyterhub jobs on worker nodes via slurm:  
+`/opt/ohpc/pub/apps/jupyterhub/bin/python3 -m pip install batchspawner wrapspawner`  
+
+and add the following to the end of `/opt/ohpc/pub/apps/jupyterhub/etc/jupyterhub/jupyterhub_config.py`:  
+
+```python
+
+c.JupyterHub.db_url = "sqlite:////opt/ohpc/pub/apps/jupyterhub/bin/jupyterhub.sqlite"
+
+c.Spawner.default_url = '/lab'
+
+import wrapspawner
+import batchspawner
+c.JupyterHub.spawner_class = 'wrapspawner.ProfilesSpawner'
+c.Spawner.http_timeout = 30
+#------------------------------------------------------------------------------
+# ProfilesSpawner configuration
+
+c.SlurmSpawner.batch_script = """#!/bin/bash
+#SBATCH --output={{homedir}}/jupyterhub_slurmspawner_%j.log
+#SBATCH -e {{homedir}}/jupyterhub_slurmspawner_%j.err
+#SBATCH --job-name=jupyterhub
+#SBATCH --chdir={{homedir}}
+#SBATCH --export={{keepvars}}
+#SBATCH --get-user-env=L
+#SBATCH -N 1
+{% if runtime    %}#SBATCH --time={{runtime}}
+{% endif %}{% if nprocs     %}#SBATCH --ntasks={{nprocs}}
+{% endif %}{% if memory     %}#SBATCH --mem={{memory}}
+{% endif %}{% if partition  %}#SBATCH --partition={{partition}}
+{% endif %}{% if ngpus      %}#SBATCH --gres=gpu:{{ngpus}}
+{% endif %}{% if options %}#SBATCH {{options}}
+{% endif %}
+
+
+trap 'echo SIGTERM received' TERM
+
+export PATH=/opt/ohpc/pub/apps/jupyterhub/bin:$PATH
+which jupyterhub-singleuser
+{{cmd}}
+echo "jupyterhub-singleuser ended gracefully"
+"""
+
+
+c.ProfilesSpawner.profiles = [
+   ('1 core, 1 GB, 1 hours', '1c1g1h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='1', req_runtime='1:00:00', req_memory='1G')),
+   ('5 core, 30 GB, 12 hours', '5c30g12h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='5', req_runtime='12:00:00', req_memory='30G')),
+   ('10 core,  60GB, 24 hours', '10c60g24h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='10', req_runtime='24:00:00', req_memory='60G')),
+   ('20 core, 115 GB, 48 hours', '20c115g48h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='20', req_runtime='48:00:00', req_memory='115G')),
+   ('1 GPU 24 core, 85 GB, 72 hours', '1gpu24c85g72h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='24', req_runtime='72:00:00', req_memory='85G', req_partition='gpu', req_ngpus='1')),
+   ('2 GPU 24 core, 85 GB, 72 hours', '2gpu24c85g72h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='24', req_runtime='72:00:00', req_memory='85G', req_partition='gpu', req_ngpus='2')),
+   ('3 GPU 24 core, 85 GB, 72 hours', '3gpu24c85g72h', 'batchspawner.SlurmSpawner',
+      dict(req_nprocs='24', req_runtime='72:00:00', req_memory='85G', req_partition='gpu', req_ngpus='3')),
+]
+
+c.JupyterHub.hub_ip = '192.168.1.250'
+
+c.JupyterHub.port = 8090
+```
+
+(The `c.ProfilesSpawner.profiles` have been adapted to the resources on our cluster. Modify or create other profiles according to your needs.)
+
+generate config file for jupyterhub  
+`mkdir -p /opt/ohpc/pub/apps/jupyterhub/etc/jupyterhub`   
+`cd /opt/ohpc/pub/apps/jupyterhub/etc/jupyterhub`  
+`/opt/ohpc/pub/apps/jupyterhub/bin/jupyterhub --generate-config`
+
+
+
+create a system service such that jupyterhub runs at boot. (Therefore it should never be launched by hand in this installation !)
+`mkdir -p /opt/ohpc/pub/apps/jupyterhub/etc/systemd`  
+
+`nano /opt/ohpc/pub/apps/jupyterhub/etc/systemd/jupyterhub.service`    
+```
+[Unit]
+Description=JupyterHub
+After=syslog.target network-online.target
+
+[Service]
+User=root
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/ohpc/pub/apps/jupyterhub/bin"
+ExecStart=/opt/ohpc/pub/apps/jupyterhub/bin/jupyterhub -f /opt/ohpc/pub/apps/jupyterhub/etc/jupyterhub/jupyterhub_config.py
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Create a symbolic link for the service 
+
+`ln -s /opt/ohpc/pub/apps/jupyterhub/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service`   
+
+enable and start it  
+
+`systemctl daemon-reload`   
+
+`systemctl enable jupyterhub.service`   
+
+`systemctl start jupyterhub.service`    
+
+
+check with   
+`systemctl status jupyterhub.service`.
+
+Note that We set in the config file that jupyterhub runs on the port 8090, such that you can access it from the browser after connecting via SSH with port forwarding:
+(from your personal computer) `ssh -L 8090:localhost:8090 ${YOUR_USERNAME}@th-top.mpq.univ-paris-diderot.fr`   
+Then open a browser and go to the address `localhost:8090` and you should be good to go! 
+
+
+---
+
+Note that during our installation, the spawner only worked for the system python (3.6.8, anaconda python was too recent and didn't work) with certain combinations of packages found with trial and error (due to bugs in the packages), so it is strongly recommended not to upgrade jupyterhub nor any package in its dedicated virtual environment, otherwise things are very likely to break. For reference, we list below the output of `/opt/ohpc/pub/apps/jupyterhub/bin/pip list`.
+
+```
+Package              Version
+-------------------- ---------
+alembic              1.7.7
+anyio                3.6.2
+argon2-cffi          21.3.0
+argon2-cffi-bindings 21.2.0
+async-generator      1.10
+attrs                22.1.0
+Babel                2.11.0
+backcall             0.2.0
+batchspawner         1.2.0
+bleach               4.1.0
+certifi              2022.9.24
+certipy              0.1.3
+cffi                 1.15.1
+charset-normalizer   2.0.12
+contextvars          2.4
+cryptography         38.0.3
+dataclasses          0.8
+decorator            5.1.1
+defusedxml           0.7.1
+entrypoints          0.4
+greenlet             2.0.1
+idna                 3.4
+immutables           0.19
+importlib-metadata   4.8.3
+importlib-resources  5.4.0
+ipykernel            5.5.6
+ipython              7.16.3
+ipython-genutils     0.2.0
+ipywidgets           7.7.2
+jedi                 0.17.2
+Jinja2               3.0.3
+json5                0.9.10
+jsonschema           3.2.0
+jupyter-client       7.1.2
+jupyter-core         4.9.2
+jupyter-server       1.13.1
+jupyter-telemetry    0.1.0
+jupyterhub           2.3.1
+jupyterlab           3.2.9
+jupyterlab-pygments  0.1.2
+jupyterlab-server    2.10.3
+jupyterlab-widgets   1.1.1
+Mako                 1.1.6
+MarkupSafe           2.0.1
+mistune              0.8.4
+nbclassic            0.3.5
+nbclient             0.5.9
+nbconvert            6.0.7
+nbformat             5.1.3
+nest-asyncio         1.5.6
+notebook             6.4.10
+oauthlib             3.2.2
+packaging            21.3
+pamela               1.0.0
+pandocfilters        1.5.0
+parso                0.7.1
+pexpect              4.8.0
+pickleshare          0.7.5
+pip                  21.3.1
+pipdeptree           2.2.1
+prometheus-client    0.15.0
+prompt-toolkit       3.0.32
+ptyprocess           0.7.0
+pycparser            2.21
+Pygments             2.13.0
+pyOpenSSL            22.1.0
+pyparsing            3.0.9
+pyrsistent           0.18.0
+python-dateutil      2.8.2
+python-json-logger   2.0.4
+pytz                 2022.6
+pyzmq                24.0.1
+requests             2.27.1
+ruamel.yaml          0.17.21
+ruamel.yaml.clib     0.2.7
+Send2Trash           1.8.0
+setuptools           39.2.0
+six                  1.16.0
+sniffio              1.2.0
+SQLAlchemy           1.4.43
+terminado            0.12.1
+testpath             0.6.0
+tornado              6.1
+traitlets            4.3.3
+typing_extensions    4.1.1
+urllib3              1.26.12
+wcwidth              0.2.5
+webencodings         0.5.1
+websocket-client     1.3.1
+wheel                0.37.1
+widgetsnbextension   3.6.1
+wrapspawner          1.0.1
+zipp                 3.6.0
+```
