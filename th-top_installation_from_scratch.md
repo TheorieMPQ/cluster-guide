@@ -327,7 +327,7 @@ PartitionName=cpu Nodes=c[1-4] Default=YES MaxTime=INFINITE State=UP DefMemPerCP
 PartitionName=gpu Nodes=g[1-2] MaxTime=INFINITE State=UP DefMemPerCPU=512 Oversubscribe=NO
 
 SlurmctldParameters=enable_configless
-ReturnToService=1
+ReturnToService=2
 
 
 ```
@@ -700,15 +700,14 @@ wait a few minutes and connect again as root. `source input.local` again.
 At this point you should be able to boot up the nodes into the vnfs. The IPMI interface (for BMC) allows us to "push the power button" of the nodes remotely:
 
 ```
-export IPMI_PASSWORD=ADMIN
 
 
 for ((i=0; i<${num_computes}; i++)) ; do
-    ipmitool -E -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power reset
+    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power reset
 done
 
 for ((i=0; i<${num_gpus}; i++)) ; do
-    ipmitool -E -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power reset
+    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power reset
 done
 
 ```
@@ -750,7 +749,7 @@ and you should see `active (running)`.
 
 **Note that when the master reboots, the worker nodes won't automatically reboot. You should issue a manual reboot for the nodes with** `pdsh -w c[1-4],g[1-2] reboot`. If the nodes are not reachable via ssh then use the ipmitool as done above to issue a hard power reset.
 
-Check the slurm status with `sinfo`. If the node `STATE` is `down` (typically what happens after nodes reboot) then you need to bring them back by 
+Check the slurm status with `sinfo`. If the node `STATE` is `down` then you need to bring them back by 
 ```
 scontrol update nodename=c[1-4],g[1-2] state=resume
 ```
@@ -814,3 +813,69 @@ Hello, world (8 procs total)
 
 
 # Congratulations! You now have a working cluster!
+
+---
+
+# What to do after a power cut ?
+
+As our university sometimes does sudden power cuts to the server room ~and we don't have the money to invest in a UPS~, the cluster will not function properly in such scenario: the power cut will cause all the nodes (master and workers) to reboot at the same time, while the provisioning service (hosted on master) won't be ready until the master node is fully up. Therefore, the PXE boot on the worker nodes will fail and they will attempt to boot from local hard drives (which contain the old OS left by the previous life of the cluster) and we will lose ssh access to them. There are also chances that the master node's OS be affected by the forced reboot. I would therefore recommend perform another gentle reboot to the master (i.e. `reboot` via ssh) to have a clean start. Once the master is up, we then hard-reboot the worker nodes via IPMI. To automate this second step, I wrote a script `/usr/local/sbin/hard-reboot-nodes.sh` that will power cycle the worker nodes and created a service `/etc/systemd/system/reboot-nodes.service` which will call this script once the master is up.
+
+
+`nano /usr/local/sbin/hard-reboot-nodes.sh`  :
+```
+#!/bin/bash
+
+num_computes="4"
+num_gpus="2"
+
+# compute node BMC addresses
+c_bmc[0]="192.168.3.100"
+c_bmc[1]="192.168.3.101"
+c_bmc[2]="192.168.3.102"
+c_bmc[3]="192.168.3.103"
+
+g_bmc[0]="192.168.3.200"
+g_bmc[1]="192.168.3.201"
+
+
+bmc_username="ADMIN"
+bmc_password="ADMIN"
+
+
+for ((i=0; i<${num_computes}; i++)) ; do
+    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power status
+done
+
+for ((i=0; i<${num_gpus}; i++)) ; do
+    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power status
+done
+```
+
+Don't forget to `chmod +x /usr/local/sbin/hard-reboot-nodes.sh`.  
+
+`nano /etc/systemd/system/reboot-nodes.service`:  
+
+```
+[Unit]
+Description=Run script at startup after all systemd services are loaded
+After=default.target
+
+[Service]
+Type=simple
+User=root
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/hard-reboot-nodes.sh
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target
+
+```
+
+`systemctl enable reboot-nodes.service`  
+
+Wait a few minutes and verify that the nodes are all up with `pdsh -w c[1-4],g[1-2] uptime`.  
+After the reboot, verify `systemctl is-active slurmctld` on master and `pdsh -w c[1-4],g[1-2] systemctl is-active slurmd` for the nodes, and that `sinfo` reports `idle` for the nodes' states.
+  
+In the worst-case scenario, the power cut can destroy the master's hard drive and you would need to buy new server-grade harddisks and start over from the very beginning of this guide (which is why it was written). We therefore recommend performing a backup of the master hard drive once a fully-working state of the cluster is established, such that in case of disk failure it suffices to reflash the backup image into the new disk and everything else whould work as usual (the advantage of having a stateless node configuration).
+  
