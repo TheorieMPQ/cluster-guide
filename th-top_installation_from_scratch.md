@@ -703,11 +703,13 @@ At this point you should be able to boot up the nodes into the vnfs. The IPMI in
 
 
 for ((i=0; i<${num_computes}; i++)) ; do
-    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power reset
+    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power on
+    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power cycle
 done
 
 for ((i=0; i<${num_gpus}; i++)) ; do
-    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power reset
+    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power on
+    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power cycle
 done
 
 ```
@@ -843,10 +845,12 @@ bmc_password="ADMIN"
 
 
 for ((i=0; i<${num_computes}; i++)) ; do
+    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power on
     ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power cycle
 done
 
 for ((i=0; i<${num_gpus}; i++)) ; do
+    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power on
     ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power cycle
 done
 ```
