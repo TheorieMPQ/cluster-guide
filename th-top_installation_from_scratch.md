@@ -843,11 +843,11 @@ bmc_password="ADMIN"
 
 
 for ((i=0; i<${num_computes}; i++)) ; do
-    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power status
+    ipmitool -I lanplus -H ${c_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power cycle
 done
 
 for ((i=0; i<${num_gpus}; i++)) ; do
-    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power status
+    ipmitool -I lanplus -H ${g_bmc[$i]} -U ${bmc_username} -P ${bmc_password} chassis power cycle
 done
 ```
 
