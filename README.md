@@ -51,9 +51,9 @@ $ module load julia
 Load default version of `julia`.
 
 ```shell
-$ module load julia/1.6.1
+$ module load julia/1.6.2
 ```
-Load `julia` v1.6.1.
+Load `julia` v1.6.2.
 
 ## Submitting jobs via `sbatch`
 th-top is not like a standard desktop computer, but it is a system composed by a master server managing 6 nodes, 4 nodes with 20 CPU cores and 2 nodes with 20 CPU cores and 3 GPUs.
@@ -84,7 +84,7 @@ echo "running a job"
 module load julia
 julia /home/username/code.jl
 ```
-To use a GPU, add a line with `#SBATCH --partition=gpu`. To launch a python script with a local conda environment `env_name`, replace 
+To use the GPU queue, add a line with `#SBATCH --partition=gpu` and if for example you need 2 gpus, add another line `#SBATCH --gres=gpu:2`. To launch a python script with a local conda environment `env_name`, replace 
 ```
 module load julia
 julia /home/username/code.jl
@@ -104,11 +104,20 @@ Its status can be checked with
 ```shell
 $ squeue
 ```
-A more complete set of examples and precisions can be found here: https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html.
+
+which gives something like
+```shell
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+  424       cpu jupyterh username  R       9:44      1 c1
+```
+
+The example job above has JOBID `424`, which is used in case you need to cancel your job: `scancel 424` (replace the number with your own JOBID).
+
+A more complete set of examples and precisions can be found here: https://slurm.schedmd.com/ (Slurm documentation) and https://hpc-uit.readthedocs.io/en/latest/jobs/examples.html (Documentation of UiT's HPC).
 
 ## Getting information about resources available on each node
 
-One can use the command `sinfo` to gain information about resources. For more info, use `sinfo --help` for a list of commands that will modify the output of `sinfo`.
+One can use the command `sinfo` to gain information about the state of the nodes. For more info, use `sinfo --help` for a list of commands that will modify the output of `sinfo`.
 
 #### Example
 ```shell
@@ -118,22 +127,43 @@ PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
 cpu*         up   infinite      4   idle c[1-4]
 gpu          up   infinite      2   idle g[1-2]
 ```
+To show the detailed resources of all nodes, one can issue `scontrol show nodes`.   
+To see a specific node, for example `c1`, use `scontrol show node c1`. This will print something like
+```
+NodeName=c1 Arch=x86_64 CoresPerSocket=10
+   CPUAlloc=0 CPUTot=20 CPULoad=0.00
+   AvailableFeatures=(null)
+   ActiveFeatures=(null)
+   Gres=(null)
+   NodeAddr=c1 NodeHostName=c1 Version=20.11.9
+   OS=Linux 4.18.0-372.26.1.el8_6.x86_64 #1 SMP Tue Sep 13 18:09:48 UTC 2022
+   RealMemory=120000 AllocMem=0 FreeMem=126907 Sockets=2 Boards=1
+   State=IDLE ThreadsPerCore=1 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A
+   Partitions=cpu
+   BootTime=2022-11-09T15:57:17 SlurmdStartTime=2022-11-09T15:59:01
+   CfgTRES=cpu=20,mem=120000M,billing=20
+   AllocTRES=
+   CapWatts=n/a
+   CurrentWatts=0 AveWatts=0
+   ExtSensorsJoules=n/s ExtSensorsWatts=0 ExtSensorsTemp=n/s
+   Comment=(null)
+```
 
-### Jupiter interacting notebook (NOT ACTIVATED FOR NOW)
+### Jupiter interacting notebook
 
 From your local computer, connect to th-top with the present command:
 ```
-ssh -L 8090:localhost:8090 YOURLOGIN@th-top.mpq.univ-paris-diderot.fr
+ssh -L 8090:localhost:8090 ${YOURLOGIN}@th-top.mpq.univ-paris-diderot.fr
 ```
-where YOURLOGIN must be replaced by your personal th-top login.
+where `${YOURLOGIN}` must be replaced by your personal th-top login.
 
-Then, open Chrome/Firefox (not Safari) on your local computer.
+Then, open a browser on your local computer.
 Connect via the web browser to `localhost:8090`
 
 Enter login and password for th-top on the login window.
 
 Now you are on Jupyter. 
-First, you have to choose how many cores you want to use for your job.
+First, you have to choose how many resources you want to use for your job.
 
 To see the directory tree: `http://localhost:8090/user/YOURLOGIN/tree?`
 Note that you can copy files from your local computer just by dragging the icon from your Directory Finder to the Notebook tree.
@@ -145,24 +175,13 @@ Otherwise, the cores will stay occupied !!!!!**
 
 ### Launching interactive jobs
 
-Interactive jobs are specified by the command-line flag `-I`. Some examples can be found hereafter.
-
-#### Examples
-```shell
-$ qsub -I -l select=1:ncpus=1
-```
-Start a job in interactive mode (`-I`) on one CPU.
+Interactive jobs are specified by the command `srun` and typically in combination with `bash -i`. `srun` accepts the same parameters as `sbatch`. For example, to run an interactive bash session with 1 cpu and 1G memory for a maximum of 1 hour, you can issue
 
 ```shell
-$ qsub -I -l select=1:ncpus=5:ngpus=1 -l memory
+srun -n 1 --mem=1G --time=01:00:00 --pty bash -i
 ```
-Start a job in interactive mode (`-I`) on 5 CPUs and 1 GPU with default memory bounds (4GB).
+and if resources permit you will be logged onto a worker node where the session runs. The job can be terminated by the command `exit` or the key combination `ctrl`+`D` from the interactive shell.
 
-```shell
-$ qsub -I -l select=1:ncpus=10:ngpus=1:mem=10G
-```
-Start a job in interactive mode (`-I`) on 10 CPUs and 1 GPU with specific maximum memory (10GB).
-
-Unavailable ressources cannot be allocated. e.g. asking for 30 CPUs will cause the job to never start because no node has 30 CPUs.
+Finally, note that unavailable ressources cannot be allocated. e.g. asking for 30 CPUs will cause the job to never start because no node has 30 CPUs.
 This is particularily tricky with RAM, you can check the ressources available on any node by refering to the relevant section of this guide.
 
