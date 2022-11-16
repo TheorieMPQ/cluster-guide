@@ -1116,3 +1116,266 @@ widgetsnbextension   3.6.1
 wrapspawner          1.0.1
 zipp                 3.6.0
 ```
+
+## To boost the performance of the GPUs, we can add a `systemd` service to the GPU nodes which will call a tuning script at each boot. The script will set the GPU clock frequencies and power usage to the maximum supported values, and set the compute mode to `Exclusive Process`, such that only up to one process (usable from multiple threads at a time) is allowed per GPU device.   
+
+First create the tuning script modified from https://github.com/Microway/MCMS-OpenHPC-Recipe :
+`export CHROOT=/opt/ohpc/admin/images/rocky8.6gpu`  
+`nano $CHROOT/etc/init.d/nvidia`  
+
+```bash
+#!/bin/bash
+#
+# nvidia    Set up NVIDIA GPU Compute Accelerators
+#
+# chkconfig: 2345 55 25
+# description:    NVIDIA GPUs provide additional compute capability. \
+#    This service sets the GPUs into the desired state.
+#
+# config: /etc/sysconfig/nvidia
+
+### BEGIN INIT INFO
+# Provides: nvidia
+# Required-Start: $local_fs $network $syslog
+# Required-Stop: $local_fs $syslog
+# Should-Start: $syslog
+# Should-Stop: $network $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Set GPUs into the desired state
+# Description:    NVIDIA GPUs provide additional compute capability.
+#    This service sets the GPUs into the desired state.
+### END INIT INFO
+
+
+################################################################################
+######################## Microway Cluster Management Software (MCMS) for OpenHPC
+################################################################################
+#
+# Copyright (c) 2015-2016 by Microway, Inc.
+#
+# This file is part of Microway Cluster Management Software (MCMS) for OpenHPC.
+#
+#    MCMS for OpenHPC is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    MCMS for OpenHPC is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with MCMS.  If not, see <http://www.gnu.org/licenses/>
+#
+################################################################################
+
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+# Some definitions to make the below more readable
+NVSMI=/usr/bin/nvidia-smi
+NVCONFIG=/etc/sysconfig/nvidia
+prog="nvidia"
+
+# default settings
+NVIDIA_ACCOUNTING=0
+NVIDIA_PERSISTENCE_MODE=1
+NVIDIA_COMPUTE_MODE=3
+NVIDIA_CLOCK_SPEEDS=max
+# pull in sysconfig settings
+[ -f $NVCONFIG ] && . $NVCONFIG
+
+RETVAL=0
+
+
+# Determine the maximum graphics and memory clock speeds for each GPU.
+# Create an array of clock speed pairs (memory,graphics) to be passed to nvidia-smi
+declare -a MAX_CLOCK_SPEEDS
+get_max_clocks()
+{
+    GPU_QUERY="$NVSMI --query-gpu=clocks.max.memory,clocks.max.graphics --format=csv,noheader,nounits"
+
+    MAX_CLOCK_SPEEDS=( $($GPU_QUERY | awk '{print $1 $2}') )
+}
+
+
+start()
+{
+    /sbin/lspci | grep -qi nvidia
+    if [ $? -ne 0 ] ; then
+        echo -n $"No NVIDIA GPUs present. Skipping NVIDIA GPU tuning."
+        warning
+        echo
+        exit 0
+    fi
+
+    echo -n $"Starting $prog: "
+
+    # If the nvidia-smi utility is missing, this script can't do its job
+    [ -x $NVSMI ] || exit 5
+
+    # A configuration file is not required
+    if [ ! -f $NVCONFIG ] ; then
+        echo -n $"No GPU config file present ($NVCONFIG) - using defaults"
+        echo
+    fi
+
+    # Set persistence mode first to speed things up
+    echo -n "persistence"
+    $NVSMI --persistence-mode=$NVIDIA_PERSISTENCE_MODE 1> /dev/null
+    RETVAL=$?
+
+    if [ ! $RETVAL -gt 0 ]; then
+        echo -n " accounting"
+        $NVSMI --accounting-mode=$NVIDIA_ACCOUNTING 1> /dev/null
+        RETVAL=$?
+    fi
+
+    if [ ! $RETVAL -gt 0 ]; then
+        echo -n " compute"
+        $NVSMI --compute-mode=$NVIDIA_COMPUTE_MODE 1> /dev/null
+        RETVAL=$?
+    fi
+
+
+    if [ ! $RETVAL -gt 0 ]; then
+        echo -n " clocks"
+        if [ -n "$NVIDIA_CLOCK_SPEEDS" ]; then
+            # If the requested clock speed value is "max",
+            # work through each GPU and set to max speed.
+            if [ "$NVIDIA_CLOCK_SPEEDS" == "max" ]; then
+                get_max_clocks
+
+                GPU_COUNTER=0
+                GPUS_SKIPPED=0
+                while [ "$GPU_COUNTER" -lt ${#MAX_CLOCK_SPEEDS[*]} ] && [ ! $RETVAL -gt 0 ]; do
+                    if [[ ${MAX_CLOCK_SPEEDS[$GPU_COUNTER]} =~ Supported ]] ; then
+                        if [ $GPUS_SKIPPED -eq 0 ] ; then
+                            echo
+                            GPUS_SKIPPED=1
+                        fi
+                        echo "Skipping non-boostable GPU"
+                    else
+                        $NVSMI -i $GPU_COUNTER --applications-clocks=${MAX_CLOCK_SPEEDS[$GPU_COUNTER]} 1> /dev/null
+                        $NVSMI -i $GPU_COUNTER --cuda-clocks=OVERRIDE
+                        power=$($NVSMI -i $GPU_COUNTER -q -d POWER | grep -F 'Max Power')
+                        power="${power#*: }"
+                        power="${power%.00 W}"
+                        if [[ "$power" != "N/A" ]]; then
+                            $run_or_print $NVSMI -i $GPU_COUNTER -pl "$power"
+                        fi
+                        
+                    fi
+                    RETVAL=$?
+
+                    GPU_COUNTER=$(( $GPU_COUNTER + 1 ))
+                done
+            else
+                # This sets all GPUs to the same clock speeds (which only works
+                # if the GPUs in this system are all the same).
+                $NVSMI --applications-clocks=$NVIDIA_CLOCK_SPEEDS 1> /dev/null
+            fi
+        else
+            $NVSMI --reset-applications-clocks 1> /dev/null
+        fi
+        RETVAL=$?
+    fi
+
+    if [ ! $RETVAL -gt 0 ]; then
+        if [ -n "$NVIDIA_POWER_LIMIT" ]; then
+            echo -n " power-limit"
+            $NVSMI --power-limit=$NVIDIA_POWER_LIMIT 1> /dev/null
+            RETVAL=$?
+        fi
+    fi
+
+    if [ ! $RETVAL -gt 0 ]; then
+        success
+    else
+        failure
+    fi
+    echo
+    return $RETVAL
+}
+
+stop()
+{
+    /sbin/lspci | grep -qi nvidia
+    if [ $? -ne 0 ] ; then
+        echo -n $"No NVIDIA GPUs present. Skipping NVIDIA GPU tuning."
+        warning
+        echo
+        exit 0
+    fi
+
+    echo -n $"Stopping $prog: "
+    [ -x $NVSMI ] || exit 5
+
+    $NVSMI --persistence-mode=0 1> /dev/null && success || failure
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+force_reload() {
+    restart
+}
+
+status() {
+    $NVSMI
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    force-reload)
+        force_reload
+        ;;
+    status)
+        status
+        RETVAL=$?
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|force-reload|status}"
+        RETVAL=2
+esac
+exit $RETVAL
+```
+
+then `chmod +x $CHROOT/etc/init.d/nvidia` and create the service file:
+`nano $CHROOT/lib/systemd/system/nvidia-gpu.service`  
+```
+[Unit]
+Description=NVIDIA GPU Initialization
+After=remote-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/init.d/nvidia start
+ExecStop=/etc/init.d/nvidia stop
+
+[Install]
+WantedBy=multi-user.target
+```
+and enable the service
+`chroot $CHROOT systemctl enable nvidia-gpu.service` 
+
+Finally update the vnfs image with
+`wwvnfs --chroot ${CHROOT}`
+and then reboot gpu nodes when they are idle to upload the new image.
