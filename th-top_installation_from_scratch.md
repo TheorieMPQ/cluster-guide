@@ -1117,7 +1117,9 @@ wrapspawner          1.0.1
 zipp                 3.6.0
 ```
 
-## To boost the performance of the GPUs, we can add a `systemd` service to the GPU nodes which will call a tuning script at each boot. The script will set the GPU clock frequencies and power usage to the maximum supported values, and set the compute mode to `Exclusive Process`, such that only up to one process (usable from multiple threads at a time) is allowed per GPU device.   
+## GPU tuning  
+
+To boost the performance of the GPUs, we can add a `systemd` service to the GPU nodes which will call a tuning script at each boot. The script will set the GPU clock frequencies and power usage to the maximum supported values, and set the compute mode to `Exclusive Process`, such that only up to one process (usable from multiple threads at a time) is allowed per GPU device.   
 
 First create the tuning script modified from https://github.com/Microway/MCMS-OpenHPC-Recipe :
 `export CHROOT=/opt/ohpc/admin/images/rocky8.6gpu`  
