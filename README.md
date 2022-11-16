@@ -1,10 +1,34 @@
 # cluster-guide
 A guide to using th-top.
 
+
+## connecting to the server
+From your local terminal (linux, macOS or Windows 10/11), connect to the cluster via ssh:
+```shell
+ssh ${username}@th-top.mpq.univ-paris-diderot.fr
+```
+where `${username}` is your login for the cluster. (If you don't have one, go ask the IT admin to create an acount for you.)
+
+## transfer of directories from th-top to local computer
+Linux and mac users can use the command `rsync` (not included in Windows) or `scp` to transfer files. Note that there exists also graphical apps for file transfer.   
+
+Example:
+```shell
+[from your local terminal]# rsync -avzhe ssh ${username}@th-top.mpq.univ-paris-diderot.fr:/home/${username}/dir/ /${local_dir}/ 
+```
+where `${username}` is your login on th-top and `${local_dir}` is the directory on your local computer. This command will copy the directory from the remote server (in this case th-top) to the local computer.
+
+
 ## Loading modules
 
-Th-Top uses modules to load python and Julia. By default users have only anaconda and julia.
-These can be loaded using the following command:
+Th-Top uses the environment module system `Lmod`. It basically sets environment variables (such as `PATH`) in real time to control whether a software installed on the cluster can be loaded in the user's environment.  
+
+To see the available modules, use the command 
+```shell
+module av
+```
+These can be loaded using
+
 ```shell
 $ module load <module_name>
 ```
@@ -32,12 +56,6 @@ with `env_name` the name of your `conda` environment (you can of course specify 
 conda activate /home/username/env_name
 ```
 and install packages as you would usually do. 
-
-## Syncronization of directories from th-top to local computer
-rsync -avzhe ssh username@th-top.mpq.univ-paris-diderot.fr:/home/username/dir/ /Users/local_username/local_dir/
-where username is your name on th-top, local_username is your local username and local_dir is the directory on your local computer.
-This command will copy the directory from the remote server (in this case th-top) to the local computer.
-
 
 #### Examples
 ```shell
@@ -153,9 +171,9 @@ NodeName=c1 Arch=x86_64 CoresPerSocket=10
 
 From your local computer, connect to th-top with the present command:
 ```
-ssh -L 8090:localhost:8090 ${YOURLOGIN}@th-top.mpq.univ-paris-diderot.fr
+ssh -L 8090:localhost:8090 ${username}@th-top.mpq.univ-paris-diderot.fr
 ```
-where `${YOURLOGIN}` must be replaced by your personal th-top login.
+where `${username}` must be replaced by your personal th-top login.
 
 Then, open a browser on your local computer.
 Connect via the web browser to `localhost:8090`
@@ -165,10 +183,10 @@ Enter login and password for th-top on the login window.
 Now you are on Jupyter. 
 First, you have to choose how many resources you want to use for your job.
 
-To see the directory tree: `http://localhost:8090/user/YOURLOGIN/tree?`
+To see the directory tree: `http://localhost:8090/user/username/tree?`
 Note that you can copy files from your local computer just by dragging the icon from your Directory Finder to the Notebook tree.
 
-To see the menu with the Applications (Julia, Python, ...): `http://localhost:8090/user/YOURLOGIN/lab`
+To see the menu with the Applications (Julia, Python, ...): `http://localhost:8090/user/username/lab`
 
 **IMPORTANT: When you are done, you should click on Control Panel and then STOP MY SERVER.
 Otherwise, the cores will stay occupied !!!!!**  
