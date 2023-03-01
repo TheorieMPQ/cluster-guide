@@ -273,7 +273,7 @@ NodeName=g1 Name=gpu File=/dev/nvidia[0-2]
 NodeName=g2 Name=gpu File=/dev/nvidia[0-2]
 ```
 
-as we specified in `ProctrackType` and `TaskPlugin`, slurm will use `cgroup` (a linux kernel feature) to track and limit the computational resources used by the jobs. Therefore, we should create another file `cgroup.conf` to specify what we want slurm to constrain:
+as we specified in `ProctrackType` and `TaskPlugin`, slurm will use `cgroup` (a linux kernel feature) to track and limit the computational resources used by the jobs. Therefore, we should create another file `cgroup.conf` to specify what we want slurm to constrain `nano /etc/slurm/cgroup.conf`:
 ```
 CgroupAutomount=yes
 
