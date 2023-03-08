@@ -824,7 +824,15 @@ set     version                     1.8.5
 prepend-path    PATH                /opt/ohpc/pub/apps/julia-1.8.5/bin/
 ```
 
-save and exit, and now we are all set ! To check that it works, issue `module avail` and you will see `julia/1.8.5    (D)` as one of the options. Note that the module system automatically sets the default version (marked by `(D)`) to be the highest one, which can then be loaded by `module load julia`. To specify a version to load, one should use `module load julia/1.8.5` instead, which is the recommended way. 
+save and exit, and now we are all set ! To check that it works, issue `module avail` and you will see `julia/1.8.5    (D)` as one of the options. Note that the module system automatically sets the default version (marked by `(D)`) to be the highest one, which can then be loaded by `module load julia`. To specify a version to load, one should use `module load julia/1.8.5` instead, which is the recommended way.   
+To fix a version as the default one to load, create a .modulerc file in the same directory as the modulefiles:   
+`sudo nano /opt/ohpc/pub/modulefiles/julia/.modulerc`  
+and specify the default version by putting the following text in the file
+```
+#%Module
+module-version julia/1.8.5 default
+```
+This example therefore fixes the default version to be julia 1.8.5 even after future additions of newer versions.
 
 4. (Optional, for Jupyter users) If a user (not `root`) wants to use the new julia version in Jupyter lab, he/she should first load this julia version with `module load julia/1.8.5`, then launch `julia` from the master node, press `]` to enter the Pkg REPL mode, and issue `add IJulia` to install the kernel, and finally do `build IJulia` to build the kernel. Then, if Jupyter is installed on the system, the new Julia kernel will show up as one of the available options when launching a notebook.
 
