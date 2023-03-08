@@ -634,7 +634,7 @@ Note that here we don't need to repeat the installation for CHROOT because they 
 
 We should therefore create a modulefile for the cuda path (check nvidia documentation https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions and lmod documentation https://lmod.readthedocs.io/).
 
-When installing other apps (such as Julia), it is recommended to put them under the shared folder `/opt/ohpc/pub/apps/` and then write corresponding module files for each.
+When installing other apps (such as Julia), it is recommended to put them under the shared folder `/opt/ohpc/pub/apps/` and then write corresponding module files for each. See example of installing Julia below.
 
 ## Booting the nodes
 
@@ -761,6 +761,56 @@ Hello, world (8 procs total)
 # Congratulations! You now have a working cluster!
 
 ---
+
+# How to add new packages (for example a new Julia version) ?
+
+As the cluster uses the `Lmod` Environment Module System to modify environment variables such as `PATH` on the fly using `module load ...` commands, when installing new apps one should make use of this system instead of including the installation directly into the `PATH`.   
+
+For example, in order to install julia 1.8.5, one can proceed as follows: 
+1. download and extract the Julia Linux Binaries as per their official guidelines
+```
+wget https://julialang-s3.julialang.org/bin/linux/x64/1.8/julia-1.8.5-linux-x86_64.tar.gz
+```
+
+```
+tar -xzvf julia-1.8.5-linux-x86_64.tar.gz
+```
+
+2. copy the extracted folder to `/opt/ohpc/pub/apps/`(note that this is our conventional path for adding new apps on this cluster)
+```
+sudo cp -r julia-1.8.5 /opt/ohpc/pub/apps/
+```
+
+3. create a modulefile for this app, which basically indicates how the environment variables should be modified in order to "load" this app so that we can call it by its name. In the case of julia, it is simply done by setting the `PATH` variable to include the path where we have put julia.  
+
+To proceed, first create a modulefile for the new app:
+```
+sudo nano /opt/ohpc/pub/modulefiles/julia/1.8.5
+```
+and we put the following in this text file:
+```
+#%Module1.0#####################################################################
+
+proc ModulesHelp { } {
+
+    puts stderr " "
+    puts stderr "This module loads the program"
+    puts stderr "Julia."
+    puts stderr "\nVersion 1.8.5\n"
+
+}
+module-whatis "Name: Julia"
+module-whatis "Version: 1.8.5"
+
+set     version                     1.8.5
+
+prepend-path    PATH                /opt/ohpc/pub/apps/julia-1.8.5/bin/
+```
+
+save and exit, and now we are all set ! To check that it works, issue `module avail` and you will see `julia/1.8.5    (D)` as one of the options. Note that the module system automatically sets the default version (marked by `(D)`) to be the highest one, which can then be loaded by `module load julia`. To specify a version to load, one should use `module load julia/1.8.5` instead, which is the recommended way. 
+
+4. (Optional, for Jupyter users) If a user (not `root`) wants to use the new julia version in Jupyter lab, he/she should first load this julia version with `module load julia/1.8.5`, then launch `julia` from the master node, press `]` to enter the Pkg REPL mode, and issue `add IJulia` to install the kernel, and finally do `build IJulia` to build the kernel. Then, if Jupyter is installed on the system, the new Julia kernel will show up as one of the available options when launching a notebook.
+
 
 # What to do after a power cut ?
 
