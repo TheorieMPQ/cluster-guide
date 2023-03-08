@@ -1,3 +1,20 @@
+# Table of contents
+
+- [th-top reloaded](#th-top-reloaded)
+  - [Preliminary](#preliminary)
+  - [Install OpenHPC Components](#install-openhpc-components)
+  - [Provisioning setup](#provisioning-setup)
+  - [Prepare system images for CPU nodes](#prepare-system-images-for-cpu-nodes)
+  - [Prepare system images for GPU nodes](#prepare-system-images-for-gpu-nodes)
+  - [Install OpenHPC Development Components](#install-openhpc-development-components)
+  - [Booting the nodes](#booting-the-nodes)
+  - [Test job](#test-job)
+- [How to add new packages (for example a new Julia version) ?](#how-to-add-new-packages-for-example-a-new-julia-version-)
+- [What to do after a power cut ?](#what-to-do-after-a-power-cut-)
+- [JupyterHub installation](#jupyterhub-installation)
+- [GPU tuning](#gpu-tuning)
+
+
 # th-top reloaded
 
 The software layer of our th-top cluster has been redeployed from scratch thanks to the
@@ -1111,7 +1128,7 @@ wrapspawner          1.0.1
 zipp                 3.6.0
 ```
 
-## GPU tuning  
+# GPU tuning  
 
 To boost the performance of the GPUs, we can add a `systemd` service to the GPU nodes which will call a tuning script at each boot. The script will set the GPU clock frequencies and power usage to the maximum supported values, and set the compute mode to `Exclusive Process`, such that only up to one process (usable from multiple threads at a time) is allowed per GPU device.   
 
