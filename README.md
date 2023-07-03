@@ -145,6 +145,17 @@ PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
 cpu*         up   infinite      4   idle c[1-4]
 gpu          up   infinite      2   idle g[1-2]
 ```
+
+The we provide (only on the master node) a command called `showfree` that helps you identify which resources are available (idle)  for immediate use before you submit a job. It is based on slurm `sinfo` command, so you can issue:
+```shell
+$ showfree
+```
+which is a shortcut for the following command:
+```shell
+$ sinfo -o '%10P %.5a %15l %6D %8t %15C %N' | egrep -v 'drain|down|alloc'
+```
+
+ 
 To show the detailed resources of all nodes, one can issue `scontrol show nodes`.   
 To see a specific node, for example `c1`, use `scontrol show node c1`. This will print something like
 ```
