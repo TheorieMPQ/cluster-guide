@@ -300,6 +300,8 @@ ConstrainSwapSpace=yes
 ConstrainDevices=yes
 ```
 
+Note that the policy we choose here allows nodes to be shared by multiple jobs based on available resources (cores and memory), due to our limited hardware. This is not optimal performance-wise, but the total job throughput can increase dramatically. Read more about consumable resources in the Slurm documentation: https://slurm.schedmd.com/cons_res.html 
+
 
 ## Provisioning setup
 
