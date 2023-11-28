@@ -214,3 +214,11 @@ and if resources permit you will be logged onto a worker node where the session 
 Finally, note that unavailable ressources cannot be allocated. e.g. asking for 30 CPUs will cause the job to never start because no node has 30 CPUs.
 This is particularily tricky with RAM, you can check the ressources available on any node by refering to the relevant section of this guide.
 
+
+### Uploading files on the cluster 
+
+
+To upload files on the cluster the secure copy process seems to have some problems. In order to upload a file one could then simply drop it via jupyther notebook. However problems may arise when try to upload a directory. To solve this use: 
+```shell
+rsync -avz -e "ssh" /path/to/my/direcotry user@th-top.mpq.univ-paris-diderot.fr:/home/path/to/where/I/wanna/upload/directory
+```
