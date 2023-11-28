@@ -218,7 +218,8 @@ This is particularily tricky with RAM, you can check the ressources available on
 ### Uploading files on the cluster 
 
 
-To upload files on the cluster the secure copy process seems to have some problems. In order to upload a file one could then simply drop it via jupyther notebook. However problems may arise when try to upload a directory. To solve this use: 
+To upload a single file, one can use the secure copy process (SCP) or simply drop it via jupyther notebook. For uploading directories, one may use the `rsync` command: 
 ```shell
 rsync -avz -e "ssh" /path/to/my/direcotry user@th-top.mpq.univ-paris-diderot.fr:/home/path/to/where/I/wanna/upload/directory
 ```
+Alternatively, one can use third party tools for more intuitive drag-and-drop operations, such as WinSCP (Windows only), FileZilla, etc.
