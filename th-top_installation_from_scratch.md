@@ -560,7 +560,13 @@ dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda
 
 dnf clean all
 
+# Mount /dev on CHROOT
+mount -o bind /dev  ${CHROOT}/dev
+
 dnf -y module install nvidia-driver:latest-dkms
+
+# umount /dev on CHROOT
+umount  ${CHROOT}/dev
 
 dnf -y install cuda
 
