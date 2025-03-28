@@ -569,6 +569,7 @@ dnf -y module install nvidia-driver:latest-dkms
 umount  ${CHROOT}/dev
 
 dnf -y install cuda
+# ( to install CUDA only on master I actually followed this: https://github.com/dasandata/Open_HPC/blob/master/Provisioning/GPU%20Node%20Provisioning%20of%20OpenHPC%20Cluster.md )
 
 dnf -y install nvidia-gds
 
